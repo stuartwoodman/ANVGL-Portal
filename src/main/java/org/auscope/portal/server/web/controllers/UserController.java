@@ -1,8 +1,7 @@
 package org.auscope.portal.server.web.controllers;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.auscope.portal.core.server.controllers.BasePortalController;
 import org.auscope.portal.core.services.PortalServiceException;
@@ -24,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -160,12 +159,14 @@ public class UserController extends BasePortalController {
             return;
         }
 
-        Map<String, Object> model = new HashMap<>();
-        model.put("s3Bucket", user.getS3Bucket());
-        model.put("awsSecret", user.getAwsSecret());
-        model.put("awsAccount", awsAccount);
+        VelocityContext context = new VelocityContext();
+        context.put("s3Bucket", user.getS3Bucket());
+        context.put("awsSecret", user.getAwsSecret());
+        context.put("awsAccount", awsAccount);
 
-        String cloudFormationScript = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, CLOUD_FORMATION_RESOURCE, "UTF-8", model);
+        StringWriter strWriter = new StringWriter();
+        velocityEngine.mergeTemplate(CLOUD_FORMATION_RESOURCE, "UTF-8", context, strWriter);
+        String cloudFormationScript = strWriter.toString();
 
         response.setContentType("application/octet");
         response.setHeader("Content-Disposition", "inline; filename=vgl-cloudformation.json;");
