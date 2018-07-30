@@ -9,7 +9,8 @@ import javax.servlet.http.HttpSession;
 import org.auscope.portal.core.services.cloud.CloudComputeService;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.server.web.security.ANVGLUser;
-import org.auscope.portal.server.web.security.NCIDetailsDao;
+import org.auscope.portal.server.web.security.NCIDetails;
+import org.auscope.portal.server.web.security.NCIDetailsRepository;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,7 +28,8 @@ public class TestMenuController extends PortalTestClass {
     private ANVGLUser mockUser = context.mock(ANVGLUser.class);
     private HttpSession mockSession = context.mock(HttpSession.class);
     private CloudComputeService[] mockCloudComputeServices = new CloudComputeService[] {context.mock(CloudComputeService.class)};
-    private NCIDetailsDao mockNciDetailsDao = context.mock(NCIDetailsDao.class);
+    private NCIDetails mockNciDetails = context.mock(NCIDetails.class);
+    private NCIDetailsRepository mockNciDetailsRepository = context.mock(NCIDetailsRepository.class);
     final String gMapKey = "13421asdasd";
     final String gAnalyticsKey = "faf3113f1";
     final String adminEmail = "cg-admin@csiro.au";
@@ -36,7 +38,7 @@ public class TestMenuController extends PortalTestClass {
 
     @Before
     public void setup() {
-        mc = new MenuController(gMapKey, gAnalyticsKey, adminEmail, "aaf_login_url.html", mockCloudComputeServices, mockNciDetailsDao);
+        mc = new MenuController(gMapKey, gAnalyticsKey, adminEmail, "aaf_login_url.html", mockCloudComputeServices, mockNciDetailsRepository);
         mc.setBuildStamp("FFFF");
 
         //Global expectations for setting build stamp id
@@ -60,7 +62,7 @@ public class TestMenuController extends PortalTestClass {
             oneOf(mockSession).getAttribute("existingSession");will(returnValue(true));
             oneOf(mockSession).setAttribute("existingSession", true);
 
-            allowing(mockUser).configuredServicesStatus(mockNciDetailsDao, mockCloudComputeServices);will(returnValue(true));
+            allowing(mockUser).configuredServicesStatus(mockNciDetails, mockCloudComputeServices);will(returnValue(true));
             allowing(mockUser).acceptedTermsConditionsStatus();will(returnValue(true));
         }});
 
@@ -88,7 +90,7 @@ public class TestMenuController extends PortalTestClass {
             oneOf(mockSession).getAttribute("existingSession");will(returnValue(null));
             oneOf(mockSession).setAttribute("existingSession", true);
 
-            allowing(mockUser).configuredServicesStatus(mockNciDetailsDao, mockCloudComputeServices);will(returnValue(true));
+            allowing(mockUser).configuredServicesStatus(mockNciDetails, mockCloudComputeServices);will(returnValue(true));
             allowing(mockUser).acceptedTermsConditionsStatus();will(returnValue(true));
         }});
 
@@ -136,7 +138,7 @@ public class TestMenuController extends PortalTestClass {
             oneOf(mockSession).getAttribute("existingSession");will(returnValue(true));
             oneOf(mockSession).setAttribute("existingSession", true);
 
-            allowing(mockUser).configuredServicesStatus(mockNciDetailsDao, mockCloudComputeServices);will(returnValue(true));
+            allowing(mockUser).configuredServicesStatus(mockNciDetails, mockCloudComputeServices);will(returnValue(true));
             allowing(mockUser).acceptedTermsConditionsStatus();will(returnValue(true));
         }});
 
@@ -157,7 +159,7 @@ public class TestMenuController extends PortalTestClass {
             oneOf(mockSession).getAttribute("existingSession");will(returnValue(true));
             oneOf(mockSession).setAttribute("existingSession", true);
 
-            allowing(mockUser).configuredServicesStatus(mockNciDetailsDao, mockCloudComputeServices);will(returnValue(false));
+            allowing(mockUser).configuredServicesStatus(mockNciDetails, mockCloudComputeServices);will(returnValue(false));
             allowing(mockUser).acceptedTermsConditionsStatus();will(returnValue(true));
 
         }});
@@ -179,7 +181,7 @@ public class TestMenuController extends PortalTestClass {
             oneOf(mockSession).getAttribute("existingSession");will(returnValue(true));
             oneOf(mockSession).setAttribute("existingSession", true);
 
-            allowing(mockUser).configuredServicesStatus(mockNciDetailsDao, mockCloudComputeServices);will(returnValue(true));
+            allowing(mockUser).configuredServicesStatus(mockNciDetails, mockCloudComputeServices);will(returnValue(true));
             allowing(mockUser).acceptedTermsConditionsStatus();will(returnValue(false));
 
         }});
@@ -201,7 +203,7 @@ public class TestMenuController extends PortalTestClass {
             allowing(mockSession).getAttribute("existingSession");will(returnValue(true));
             allowing(mockSession).setAttribute("existingSession", true);
 
-            allowing(mockUser).configuredServicesStatus(mockNciDetailsDao, mockCloudComputeServices);will(returnValue(false));
+            allowing(mockUser).configuredServicesStatus(mockNciDetails, mockCloudComputeServices);will(returnValue(false));
             allowing(mockUser).acceptedTermsConditionsStatus();will(returnValue(false));
         }});
 

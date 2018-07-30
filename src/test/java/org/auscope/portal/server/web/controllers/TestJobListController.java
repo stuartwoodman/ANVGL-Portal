@@ -27,7 +27,7 @@ import org.auscope.portal.jmock.VEGLSeriesMatcher;
 import org.auscope.portal.server.vegl.VEGLJob;
 import org.auscope.portal.server.vegl.VEGLJobManager;
 import org.auscope.portal.server.vegl.VEGLSeries;
-import org.auscope.portal.server.vegl.VGLJobAuditLogDao;
+import org.auscope.portal.server.vegl.VGLJobAuditLogRepository;
 import org.auscope.portal.server.vegl.VGLJobStatusAndLogReader;
 import org.auscope.portal.server.web.security.ANVGLUser;
 import org.auscope.portal.server.web.service.CloudSubmissionService;
@@ -51,7 +51,7 @@ public class TestJobListController extends PortalTestClass {
     private FileStagingService mockFileStagingService;
     private CloudComputeService[] mockCloudComputeServices;
     private VGLJobStatusAndLogReader mockVGLJobStatusAndLogReader;
-    private VGLJobAuditLogDao mockJobAuditLogDao;
+    private VGLJobAuditLogRepository mockJobAuditLogRepository;
     private ANVGLUser mockPortalUser;
     private JobStatusMonitor mockJobStatusMonitor;
     private HttpServletRequest mockRequest;
@@ -72,7 +72,7 @@ public class TestJobListController extends PortalTestClass {
         mockJobStatusMonitor = context.mock(JobStatusMonitor.class);
         mockResponse = context.mock(HttpServletResponse.class);
         mockRequest = context.mock(HttpServletRequest.class);
-        mockJobAuditLogDao = context.mock(VGLJobAuditLogDao.class);
+        mockJobAuditLogRepository = context.mock(VGLJobAuditLogRepository.class);
         mockPortalUser = context.mock(ANVGLUser.class);
         mockCloudSubmissionService = context.mock(CloudSubmissionService.class);
         final List<VEGLJob> mockJobs=new ArrayList<>();
@@ -84,8 +84,15 @@ public class TestJobListController extends PortalTestClass {
         }});
 
         controller = new JobListController(mockJobManager,
-                mockCloudStorageServices, mockFileStagingService,
-                mockCloudComputeServices, mockVGLJobStatusAndLogReader, mockJobStatusMonitor,null,null,null,"dummy@dummy.com", mockCloudSubmissionService, mockJobAuditLogDao);
+                mockCloudStorageServices,
+                mockFileStagingService,
+                mockCloudComputeServices,
+                mockVGLJobStatusAndLogReader,
+                mockJobStatusMonitor,
+                null,null,
+                "dummy@dummy.com",
+                mockCloudSubmissionService,
+                mockJobAuditLogRepository);
     }
 
 

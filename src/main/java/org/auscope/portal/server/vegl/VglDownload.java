@@ -2,6 +2,15 @@ package org.auscope.portal.server.vegl;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -9,11 +18,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author Josh Vote
  *
  */
+@Entity
+@Table(name = "downloads")
 public class VglDownload implements Serializable, Cloneable {
     private static final long serialVersionUID = 5436097345907506395L;
 
-
     /** The primary key for this download*/
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
     /** The descriptive name of this download*/
     private String name;
@@ -32,14 +44,21 @@ public class VglDownload implements Serializable, Cloneable {
     /** If this download is for a spatial region this will represent the most western bounds of the region in WGS:84*/
     private Double westBoundLongitude;
     /** The job that owns this download*/
+    
+    // TODO: XXX FK jobId: jobs('id')  (delete cascade)
     @JsonIgnore
+    @OneToOne
+    @JoinColumn(name="id")
     private VEGLJob parent;
 
     /** Organisation or person responsible for this data set */
+    @Transient
     private String owner;
     /** Url of the data this is a subset of (if applicable) */
+    @Transient
     private String parentUrl;
     /** Name of the data this is a subset of (if applicable) */
+    @Transient
     private String parentName;
 
 

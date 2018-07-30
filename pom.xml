@@ -101,12 +101,13 @@
         
         <plugins>
         
-            <!-- XXX Possibly reinstate after XML->Java
+            <!-- XXX Possibly reinstate after XML->Java -->
+            
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            -->
+
             
             <!-- XXX Possibly only needed during migration XML->Java -->
             <plugin>
@@ -392,6 +393,15 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         
+        <!--  Tomcat -->
+        <!--
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        -->
+        
         <!-- JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -403,13 +413,22 @@
         </dependency>
         
         <!-- DevTools -->
+        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
+        -->
+        
+        <!-- Production management services -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
         
         <!-- Web MVC (possibly only needed during migration from XML to Java) -->
+        <!--
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -421,8 +440,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        -->
         
         <!-- Spring Boot security (general) -->
+        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -435,6 +456,7 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
+        -->
 
         <!-- Spring Boot social authentication -->
         <!--
@@ -723,12 +745,12 @@
         </dependency>
         -->
         
-        <!-- XXX
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

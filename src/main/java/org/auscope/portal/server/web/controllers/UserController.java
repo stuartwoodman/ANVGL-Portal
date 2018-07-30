@@ -15,17 +15,17 @@ import org.apache.velocity.app.VelocityEngine;
 import org.auscope.portal.core.server.controllers.BasePortalController;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.server.web.security.ANVGLUser;
-import org.auscope.portal.server.web.security.ANVGLUserDao;
+import org.auscope.portal.server.web.security.ANVGLUserRepository;
 import org.auscope.portal.server.web.security.NCIDetails;
-import org.auscope.portal.server.web.security.NCIDetailsDao;
+import org.auscope.portal.server.web.security.NCIDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -33,14 +33,14 @@ import org.springframework.web.servlet.ModelAndView;
  * A controller class for accessing/modifying user metadata
  * @author Josh Vote
  */
-@Controller
+@RestController
 public class UserController extends BasePortalController {
     private static final String CLOUD_FORMATION_RESOURCE = "org/auscope/portal/server/web/controllers/vl-cloudformation.json.tpl";
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private ANVGLUserDao userDao;
-    private NCIDetailsDao nciDetailsDao;
+    private ANVGLUserRepository userRepository;
+    private NCIDetailsRepository nciDetailsRepository;
     private VelocityEngine velocityEngine;
 
     private String awsAccount;
@@ -48,14 +48,16 @@ public class UserController extends BasePortalController {
     private String tacVersion;
     
     @Autowired
-    public UserController(ANVGLUserDao userDao, NCIDetailsDao nciDetailsDao,
+    public UserController(
+            ANVGLUserRepository userRepository,
+            NCIDetailsRepository nciDetailsRepository,
             VelocityEngine velocityEngine,
             @Value("${env.aws.account}") String awsAccount,
             @Value("${termsconditions.version}") String tacVersion) throws PortalServiceException {
         super();
         
-        this.userDao = userDao;
-        this.nciDetailsDao = nciDetailsDao;
+        this.userRepository = userRepository;
+        this.nciDetailsRepository = nciDetailsRepository;
         this.velocityEngine = velocityEngine;
         this.awsAccount=awsAccount;
         this.tacVersion=tacVersion;
@@ -67,7 +69,7 @@ public class UserController extends BasePortalController {
      * @param user
      * @return
      */
-    @RequestMapping("/secure/getUser.do")
+    @GetMapping("/secure/getUser.do")
     public ModelAndView getUser(@AuthenticationPrincipal ANVGLUser user) {
         if (user == null) {
             return generateJSONResponseMAV(false);
@@ -93,7 +95,7 @@ public class UserController extends BasePortalController {
      * @param acceptedTermsConditions
      * @return
      */
-    @RequestMapping("/secure/setUser.do")
+    @GetMapping("/secure/setUser.do")
     public ModelAndView setUser(@AuthenticationPrincipal ANVGLUser user,
             @RequestParam(required=false, value="arnExecution") String arnExecution,
             @RequestParam(required=false, value="arnStorage") String arnStorage,
@@ -126,13 +128,13 @@ public class UserController extends BasePortalController {
         }
 
         if (modified) {
-            userDao.save(user);
+            userRepository.save(user);
         }
 
         return generateJSONResponseMAV(true);
     }
 
-    @RequestMapping("/getTermsConditions.do")
+    @GetMapping("/getTermsConditions.do")
     public ModelAndView getTermsConditions(@AuthenticationPrincipal ANVGLUser user) {
 
         try {
@@ -152,7 +154,7 @@ public class UserController extends BasePortalController {
         }
     }
 
-    @RequestMapping("/secure/getCloudFormationScript.do")
+    @GetMapping("/secure/getCloudFormationScript.do")
     public void getCloudFormationScript(@AuthenticationPrincipal ANVGLUser user, HttpServletResponse response) throws IOException {
         if (user == null) {
             response.sendError(HttpStatus.UNAUTHORIZED.value());
@@ -178,13 +180,14 @@ public class UserController extends BasePortalController {
         }
     }
     
-    @RequestMapping("/secure/getNCIDetails.do")
+    @GetMapping("/secure/getNCIDetails.do")
     public ModelAndView getNCIDetails(@AuthenticationPrincipal ANVGLUser user) throws PortalServiceException {
         if (user == null) {
             return generateJSONResponseMAV(false);
         }
         ModelMap detailsObj = new ModelMap();
-        NCIDetails details = nciDetailsDao.getByUser(user);
+        
+        NCIDetails details = nciDetailsRepository.findByUser(user);
         if(details != null) {
             try {
                 detailsObj.put("nciUsername", details.getUsername());
@@ -198,7 +201,7 @@ public class UserController extends BasePortalController {
         return generateJSONResponseMAV(false);
     }
     
-    @RequestMapping("/secure/setNCIDetails.do")
+    @GetMapping("/secure/setNCIDetails.do")
     public ModelAndView setNCIDetails(@AuthenticationPrincipal ANVGLUser user,
             @RequestParam(required=false, value="nciUsername") String username,
             @RequestParam(required=false, value="nciProject") String project,
@@ -207,7 +210,8 @@ public class UserController extends BasePortalController {
         if (user == null) {
             return generateJSONResponseMAV(false);
         }
-        NCIDetails details = nciDetailsDao.getByUser(user);
+        
+        NCIDetails details = nciDetailsRepository.findByUser(user);
         if(details == null) {
             details = new NCIDetails();
             details.setUser(user);
@@ -234,7 +238,7 @@ public class UserController extends BasePortalController {
         }
             
         if (modified) {
-            nciDetailsDao.save(details);
+            nciDetailsRepository.save(details);
         }
         return generateJSONResponseMAV(true);        
     }

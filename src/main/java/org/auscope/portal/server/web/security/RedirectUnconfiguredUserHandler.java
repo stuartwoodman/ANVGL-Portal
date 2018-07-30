@@ -25,14 +25,15 @@ public class RedirectUnconfiguredUserHandler implements AuthenticationSuccessHan
 
     protected CloudStorageService[] cloudStorageServices;
     protected CloudComputeService[] cloudComputeServices;
-    protected NCIDetailsDao nciDetailsDao;
+    protected NCIDetailsRepository nciDetailsRepository;
 
-    public NCIDetailsDao getNciDetailsDao() {
-        return nciDetailsDao;
+    // TODO: Check how this is set
+    public NCIDetailsRepository getNciDetailsRepository() {
+        return nciDetailsRepository;
     }
 
-    public void setNciDetailsDao(NCIDetailsDao nciDetailsDao) {
-        this.nciDetailsDao = nciDetailsDao;
+    public void setNciDetailsRepository(NCIDetailsRepository nciDetailsRepository) {
+        this.nciDetailsRepository = nciDetailsRepository;
     }
 
     public CloudStorageService[] getCloudStorageServices() {
@@ -64,7 +65,8 @@ public class RedirectUnconfiguredUserHandler implements AuthenticationSuccessHan
             ANVGLUser user = (ANVGLUser) principal;
             try {
                 boolean tcs = user.acceptedTermsConditionsStatus();
-                boolean configured = user.configuredServicesStatus(nciDetailsDao, cloudComputeServices);
+                NCIDetails nciDetails = nciDetailsRepository.findByUser(user);
+                boolean configured = user.configuredServicesStatus(nciDetails, cloudComputeServices);
 
                 //Redirect if the user needs to accept T&Cs OR if they don't have any config services setup
                 if (!configured || !tcs) {
@@ -76,7 +78,6 @@ public class RedirectUnconfiguredUserHandler implements AuthenticationSuccessHan
                             params = "?next=" + requestUrl.getPath();
                         }
                     }
-
 
                     response.sendRedirect(redirect + params);
                     return;

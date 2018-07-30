@@ -43,7 +43,8 @@ import org.auscope.portal.server.vegl.VglDownload;
 import org.auscope.portal.server.vegl.VglMachineImage;
 import org.auscope.portal.server.vegl.VglParameter.ParameterType;
 import org.auscope.portal.server.web.security.ANVGLUser;
-import org.auscope.portal.server.web.security.NCIDetailsDao;
+import org.auscope.portal.server.web.security.NCIDetails;
+import org.auscope.portal.server.web.security.NCIDetailsRepository;
 import org.auscope.portal.server.web.service.ANVGLProvenanceService;
 import org.auscope.portal.server.web.service.CloudSubmissionService;
 import org.auscope.portal.server.web.service.ScmEntryService;
@@ -55,15 +56,15 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -74,9 +75,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Abdi Jama
  * @author Josh Vote
  */
-@Controller
+@RestController
 public class JobBuilderController extends BaseCloudController {
-
 
     /** Logger for this class */
     private final Log logger = LogFactory.getLog(getClass());
@@ -87,7 +87,7 @@ public class JobBuilderController extends BaseCloudController {
     private String adminEmail = null;
     private String defaultToolbox = null;
     private CloudSubmissionService cloudSubmissionService;
-    private NCIDetailsDao nciDetailsDao;
+    private NCIDetailsRepository nciDetailsRepository;
 
     /**
      * @return the adminEmail
@@ -128,7 +128,7 @@ public class JobBuilderController extends BaseCloudController {
             CloudComputeService[] cloudComputeServices, VGLJobStatusChangeHandler vglJobStatusChangeHandler,
             ScmEntryService scmEntryService, ANVGLProvenanceService anvglProvenanceService,
             CloudSubmissionService cloudSubmissionService,
-            NCIDetailsDao nciDetailsDao) {
+            NCIDetailsRepository nciDetailsRepository) {
         super(cloudStorageServices, cloudComputeServices, jobManager,vmSh,vmShutdownSh);
         this.fileStagingService = fileStagingService;
         this.cloudStorageServices = cloudStorageServices;
@@ -139,7 +139,7 @@ public class JobBuilderController extends BaseCloudController {
         this.adminEmail=adminEmail;
         this.defaultToolbox = defaultToolbox;
         this.cloudSubmissionService = cloudSubmissionService;
-        this.nciDetailsDao = nciDetailsDao;
+        this.nciDetailsRepository = nciDetailsRepository;
     }
 
 
@@ -152,7 +152,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return A JSON object with a data attribute containing a populated
      *         VEGLJob object and a success attribute.
      */
-    @RequestMapping("/secure/getJobObject.do")
+    @GetMapping("/secure/getJobObject.do")
     public ModelAndView getJobObject(@RequestParam("jobId") String jobId, @AuthenticationPrincipal ANVGLUser user) {
         try {
             VEGLJob job = attemptGetJob(Integer.parseInt(jobId), user);
@@ -188,7 +188,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return A JSON object with a files attribute which is an array of
      *         filenames.
      */
-    @RequestMapping("/secure/stagedJobFiles.do")
+    @GetMapping("/secure/stagedJobFiles.do")
     public ModelAndView stagedJobFiles(@RequestParam("jobId") String jobId, @AuthenticationPrincipal ANVGLUser user) {
 
         //Lookup our job
@@ -231,7 +231,7 @@ public class JobBuilderController extends BaseCloudController {
      *         failure.
      * @throws IOException
      */
-    @RequestMapping("/secure/downloadInputFile.do")
+    @GetMapping("/secure/downloadInputFile.do")
     public ModelAndView downloadFile(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") String jobId,
@@ -257,7 +257,7 @@ public class JobBuilderController extends BaseCloudController {
      *
      * @return null
      */
-    @RequestMapping("/secure/uploadFile.do")
+    @GetMapping("/secure/uploadFile.do")
     public ModelAndView uploadFile(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") String jobId, @AuthenticationPrincipal ANVGLUser user) {
@@ -300,7 +300,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return A JSON object with a success attribute that indicates whether
      *         the files were successfully deleted.
      */
-    @RequestMapping("/secure/deleteFiles.do")
+    @GetMapping("/secure/deleteFiles.do")
     public ModelAndView deleteFiles(@RequestParam("jobId") String jobId,
             @RequestParam("fileName") String[] fileNames, @AuthenticationPrincipal ANVGLUser user) {
 
@@ -333,7 +333,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return A JSON object with a success attribute that indicates whether
      *         the downloads were successfully deleted.
      */
-    @RequestMapping("/secure/deleteDownloads.do")
+    @GetMapping("/secure/deleteDownloads.do")
     public ModelAndView deleteDownloads(@RequestParam("jobId") String jobId,
             @RequestParam("downloadId") Integer[] downloadIds, @AuthenticationPrincipal ANVGLUser user) {
 
@@ -380,7 +380,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return A JSON object with a success attribute that indicates the status.
      *
      */
-    @RequestMapping("/secure/getJobStatus.do")
+    @GetMapping("/secure/getJobStatus.do")
     public ModelAndView getJobStatus(@RequestParam("jobId") String jobId, @AuthenticationPrincipal ANVGLUser user) {
 
         //Get our job
@@ -407,7 +407,7 @@ public class JobBuilderController extends BaseCloudController {
      *
      * @return null
      */
-    @RequestMapping("/secure/cancelSubmission.do")
+    @GetMapping("/secure/cancelSubmission.do")
     public ModelAndView cancelSubmission(@RequestParam("jobId") String jobId, @AuthenticationPrincipal ANVGLUser user) {
 
         //Get our job
@@ -450,7 +450,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return
      * @throws ParseException
      */
-    @RequestMapping("/secure/updateOrCreateJob.do")
+    @GetMapping("/secure/updateOrCreateJob.do")
     public ModelAndView updateOrCreateJob(@RequestParam(value="id", required=false) Integer id,  //The integer ID if not specified will trigger job creation
             @RequestParam(value="name", required=false) String name,
             @RequestParam(value="description", required=false) String description,
@@ -586,7 +586,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return
      * @throws ParseException
      */
-    @RequestMapping("/secure/updateJobSeries.do")
+    @GetMapping("/secure/updateJobSeries.do")
     public ModelAndView updateJobSeries(@RequestParam(value="id", required=true) Integer id,  //The integer ID if not specified will trigger job creation
             @RequestParam(value="folderName", required=true) String folderName, //Name of the folder to move to
             HttpServletRequest request,
@@ -642,7 +642,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return
      * @throws ParseException
      */
-    @RequestMapping("/secure/updateJobDownloads.do")
+    @GetMapping("/secure/updateJobDownloads.do")
     public ModelAndView updateJobDownloads(@RequestParam("id") Integer id,  //The integer ID is the only required value
             @RequestParam(required=false, value="append", defaultValue="false") String appendString,
             @RequestParam("name") String[] names,
@@ -705,7 +705,7 @@ public class JobBuilderController extends BaseCloudController {
      * @param jobId
      * @return
      */
-    @RequestMapping("/secure/getJobDownloads.do")
+    @GetMapping("/secure/getJobDownloads.do")
     public ModelAndView getJobDownloads(@RequestParam("jobId") Integer jobId, @AuthenticationPrincipal ANVGLUser user) {
         //Lookup the job
         VEGLJob job;
@@ -781,7 +781,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return A JSON object with a success attribute that indicates whether
      *         the job was successfully submitted.
      */
-    @RequestMapping("/secure/submitJob.do")
+    @GetMapping("/secure/submitJob.do")
     public ModelAndView submitJob(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") String jobId,
@@ -1028,7 +1028,7 @@ public class JobBuilderController extends BaseCloudController {
      * Request wrapper to get the default toolbox uri.
      *
      */
-    @RequestMapping("/getDefaultToolbox.do")
+    @GetMapping("/getDefaultToolbox.do")
     public ModelAndView doGetDefaultToolbox() {
         return generateJSONResponseMAV(true, new String[] {getDefaultToolbox()}, "");
     }
@@ -1044,7 +1044,7 @@ public class JobBuilderController extends BaseCloudController {
      * @param jobId (optional) id of a job to limit suitable images
      * @return
      */
-    @RequestMapping("/secure/getVmImagesForComputeService.do")
+    @GetMapping("/secure/getVmImagesForComputeService.do")
     public ModelAndView getImagesForComputeService(
             HttpServletRequest request,
             @RequestParam("computeServiceId") String computeServiceId,
@@ -1102,7 +1102,7 @@ public class JobBuilderController extends BaseCloudController {
      *
      * @param computeServiceId
      */
-    @RequestMapping("/secure/getVmTypesForComputeService.do")
+    @GetMapping("/secure/getVmTypesForComputeService.do")
     public ModelAndView getTypesForComputeService(HttpServletRequest request,
             @RequestParam("computeServiceId") String computeServiceId,
             @RequestParam("machineImageId") String machineImageId) {
@@ -1134,7 +1134,7 @@ public class JobBuilderController extends BaseCloudController {
      * @return
      * @throws PortalServiceException
      */
-    @RequestMapping("/secure/getComputeServices.do")
+    @GetMapping("/secure/getComputeServices.do")
     public ModelAndView getComputeServices(@RequestParam(value="jobId",
     required=false) final
             Integer jobId,
@@ -1147,7 +1147,8 @@ public class JobBuilderController extends BaseCloudController {
         }
 
         Set<String> configuredServiceIds = new HashSet<String>();
-        getConfiguredComputeServices(user, nciDetailsDao).stream().forEach(x -> configuredServiceIds.add(x.getId()));
+        NCIDetails nciDetails = nciDetailsRepository.findByUser(user);
+        getConfiguredComputeServices(user, nciDetails).stream().forEach(x -> configuredServiceIds.add(x.getId()));
 
         List<ModelMap> simpleComputeServices = new ArrayList<>();
 
@@ -1170,7 +1171,7 @@ public class JobBuilderController extends BaseCloudController {
      * Gets a JSON list of id/name pairs for every available storage service
      * @return
      */
-    @RequestMapping("/secure/getStorageServices.do")
+    @GetMapping("/secure/getStorageServices.do")
     public ModelAndView getStorageServices() {
         List<ModelMap> simpleStorageServices = new ArrayList<>();
 
@@ -1193,7 +1194,7 @@ public class JobBuilderController extends BaseCloudController {
      * @param jobId
      * @return
      */
-    @RequestMapping("/secure/getAllJobInputs.do")
+    @GetMapping("/secure/getAllJobInputs.do")
     public ModelAndView getAllJobInputs(@RequestParam("jobId") Integer jobId, @AuthenticationPrincipal ANVGLUser user) {
         VEGLJob job = null;
         try {

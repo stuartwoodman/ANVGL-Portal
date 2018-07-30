@@ -38,7 +38,7 @@ import org.auscope.portal.server.vegl.VglMachineImage;
 import org.auscope.portal.server.vegl.VglParameter;
 import org.auscope.portal.server.vegl.mail.JobMailSender;
 import org.auscope.portal.server.web.security.ANVGLUser;
-import org.auscope.portal.server.web.security.NCIDetailsDao;
+import org.auscope.portal.server.web.security.NCIDetailsRepository;
 import org.auscope.portal.server.web.service.ANVGLFileStagingService;
 import org.auscope.portal.server.web.service.ANVGLProvenanceService;
 import org.auscope.portal.server.web.service.CloudSubmissionService;
@@ -77,7 +77,7 @@ public class TestJobBuilderController {
     private CloudSubmissionService mockCloudSubmissionService;
     private ANVGLProvenanceService mockAnvglProvenanceService;
     private ANVGLFileStagingService mockFileStagingService;
-    private NCIDetailsDao mockNciDetailsDao;
+    private NCIDetailsRepository mockNciDetailsRepository;
 
     private JobMailSender mockJobMailSender;
     private VGLJobStatusAndLogReader mockVGLJobStatusAndLogReader;
@@ -106,7 +106,7 @@ public class TestJobBuilderController {
         mockRequest = context.mock(HttpServletRequest.class);
         mockResponse = context.mock(HttpServletResponse.class);
         mockSession = context.mock(HttpSession.class);
-        mockNciDetailsDao = context.mock(NCIDetailsDao.class);
+        mockNciDetailsRepository = context.mock(NCIDetailsRepository.class);
 
         mockJobMailSender = context.mock(JobMailSender.class);
         mockVGLJobStatusAndLogReader = context.mock(VGLJobStatusAndLogReader.class);
@@ -135,7 +135,7 @@ public class TestJobBuilderController {
                                      mockScmEntryService,
                                      mockAnvglProvenanceService,
                                      mockCloudSubmissionService,
-                                     mockNciDetailsDao);
+                                     mockNciDetailsRepository);
 
         user = new ANVGLUser();
         user.setEmail("user@example.com");
@@ -1662,7 +1662,7 @@ public class TestJobBuilderController {
             allowing(mockCloudComputeServices[0]).getName();will(returnValue(name));
             allowing(mockCloudComputeServices[0]).getId();will(returnValue(id));
             allowing(mockScmEntryService).getJobProviders(null, user);will(returnValue(null));
-            oneOf(mockNciDetailsDao).getByUser(mockPortalUser);will(returnValue(null));
+            oneOf(mockNciDetailsRepository).findByUser(mockPortalUser);will(returnValue(null));
         }});
 
 		ModelAndView mav = controller.getComputeServices(null, user);

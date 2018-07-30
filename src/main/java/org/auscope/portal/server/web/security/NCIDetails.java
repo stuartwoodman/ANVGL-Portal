@@ -2,8 +2,19 @@ package org.auscope.portal.server.web.security;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import org.auscope.portal.core.cloud.CloudJob;
 
+@Entity
+@Table(name = "nci_details")
 public class NCIDetails implements Serializable {
 
     private static final long serialVersionUID = -7219385540898450290L;
@@ -12,10 +23,22 @@ public class NCIDetails implements Serializable {
     public final static String PROPERTY_NCI_KEY = "nci_key";
     public final static String PROPERTY_NCI_PROJECT = "nci_project";
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+    
+    // TODO: XXX FK: users('id')   (delete/update cascade)
+    @OneToOne
+    @JoinColumn(name="id")
     private ANVGLUser user;
+    
+    @Column(name="nci_username")
     private String username;
+    
+    @Column(name="nci_project")
     private String project;
+    
+    @Column(name="nci_key")
     private String key;
 
     public NCIDetails() {

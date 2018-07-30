@@ -2,6 +2,14 @@ package org.auscope.portal.server.vegl;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -15,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author Josh Vote
  *
  */
+@Entity
+@Table(name = "parameters")
 public class VglParameter implements Serializable, Cloneable {
 
     private static final long serialVersionUID = -7474027234400180238L;
@@ -29,6 +39,8 @@ public class VglParameter implements Serializable, Cloneable {
     }
 
     /** The primary key for this parameter*/
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
     /** The name of this parameter*/
     private String name;
@@ -36,8 +48,12 @@ public class VglParameter implements Serializable, Cloneable {
     private String value;
     /** The 'type' of this parameter. Can be 'number' or 'string'*/
     private String type;
+    
+    // TODO: XXX FK jobId:  jobs('id')   (cascade delete)
     /** The job that owns this parameter*/
     @JsonIgnore
+    @OneToOne
+    @JoinColumn(name="id")
     private VEGLJob parent;
 
 

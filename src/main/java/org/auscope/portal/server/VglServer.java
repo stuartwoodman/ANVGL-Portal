@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.amazonaws.services.appstream.model.Application;
-
 
 /**
  * Spring Boot Application
@@ -18,7 +16,6 @@ import com.amazonaws.services.appstream.model.Application;
  *
  */
 @SpringBootApplication
-@ImportResource("file:/WEB-INF/applicationContext.xml")
 public class VglServer /*extends SpringBootServletInitializer*/ {
     
     /*
@@ -29,7 +26,7 @@ public class VglServer /*extends SpringBootServletInitializer*/ {
     */
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(VglServer.class, args);
     }
     
 }

@@ -3,12 +3,20 @@ package org.auscope.portal.server.vegl;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * A simple POJO class that stores a job life cycle transition
  * information for auditing purposes.
  *
  * @author Richard Goh
  */
+@Entity
+@Table(name = "jobs_audit_log")
 public class VGLJobAuditLog implements Serializable {
 
     /**
@@ -17,9 +25,17 @@ public class VGLJobAuditLog implements Serializable {
     private static final long serialVersionUID = -1762982566490775865L;
 
     /** The primary key for this parameter*/
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+    
     /** The id of the job that owns this parameter*/
+    // TODO: XXX FK: jobId: jobs('id')  (delete cascade)
+    //@OneToOne
+    //@JoinColumn(name="id")
+    // Why not VEGLJob?
     private Integer jobId;
+    
     /** The descriptive status of the job before its status change */
     private String fromStatus;
     /** The descriptive status of the job after its status change  */

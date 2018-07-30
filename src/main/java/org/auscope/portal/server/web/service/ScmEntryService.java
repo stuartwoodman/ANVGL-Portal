@@ -20,7 +20,7 @@ import org.auscope.portal.core.services.cloud.CloudComputeService;
 import org.auscope.portal.server.vegl.VEGLJob;
 import org.auscope.portal.server.vegl.VEGLJobManager;
 import org.auscope.portal.server.vegl.VLScmSnapshot;
-import org.auscope.portal.server.vegl.VLScmSnapshotDao;
+import org.auscope.portal.server.vegl.VLScmSnapshotRepository;
 import org.auscope.portal.server.web.security.ANVGLUser;
 import org.auscope.portal.server.web.service.csw.SearchFacet;
 import org.auscope.portal.server.web.service.csw.SearchFacet.Comparison;
@@ -56,7 +56,7 @@ public class ScmEntryService implements ScmLoader {
     protected static final String PUPPET_TEMPLATE =
             "org/auscope/portal/server/web/service/template.pp";
 
-    private VLScmSnapshotDao vlScmSnapshotDao;
+    private VLScmSnapshotRepository vlScmSnapshotRepository;
     private VelocityEngine velocityEngine;
     private VEGLJobManager jobManager;
     private CloudComputeService[] cloudComputeServices;
@@ -69,12 +69,12 @@ public class ScmEntryService implements ScmLoader {
      * Create a new instance.
      */
     @Autowired
-    public ScmEntryService(VLScmSnapshotDao vlScmSnapshotDao,
+    public ScmEntryService(VLScmSnapshotRepository vlScmSnapshotRepository,
             VEGLJobManager jobManager,
             VelocityEngine velocityEngine,
             CloudComputeService[] cloudComputeServices) {
         super();
-        this.vlScmSnapshotDao = vlScmSnapshotDao;
+        this.vlScmSnapshotRepository = vlScmSnapshotRepository;
         this.jobManager = jobManager;
         this.setVelocityEngine(velocityEngine);
         this.cloudComputeServices = cloudComputeServices;
@@ -103,8 +103,12 @@ public class ScmEntryService implements ScmLoader {
     public String getScmEntrySnapshotId(String entryId,
             String computeServiceId) {
         String vmId = null;
+        /*
         VLScmSnapshot snapshot = vlScmSnapshotDao
                 .getSnapshotForEntryAndProvider(entryId, computeServiceId);
+        */
+        VLScmSnapshot snapshot = vlScmSnapshotRepository
+                .findByScmEntryIdAndComputeServiceId(entryId, computeServiceId);
         if (snapshot != null) {
             vmId = snapshot.getComputeVmId();
         }
@@ -545,17 +549,17 @@ public class ScmEntryService implements ScmLoader {
     }
 
     /**
-     * @return the vlScmSnapshotDao
+     * @return the vlScmSnapshotRepository
      */
-    public VLScmSnapshotDao getVlScmSnapshotDao() {
-        return vlScmSnapshotDao;
+    public VLScmSnapshotRepository getVlScmSnapshotRepository() {
+        return vlScmSnapshotRepository;
     }
 
     /**
      * @param vlScmSnapshotDao the vlScmSnapshotDao to set
      */
-    public void setVlScmSnapshotDao(VLScmSnapshotDao vlScmSnapshotDao) {
-        this.vlScmSnapshotDao = vlScmSnapshotDao;
+    public void setVlScmSnapshotDao(VLScmSnapshotRepository vlScmSnapshotRepository) {
+        this.vlScmSnapshotRepository = vlScmSnapshotRepository;
     }
 
     /**

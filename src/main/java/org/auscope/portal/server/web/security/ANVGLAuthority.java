@@ -1,5 +1,15 @@
 package org.auscope.portal.server.web.security;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.springframework.security.core.GrantedAuthority;
 
 /**
@@ -7,10 +17,19 @@ import org.springframework.security.core.GrantedAuthority;
  * @author Josh Vote (CSIRO)
  *
  */
+@Entity
+@Table(name = "authorities")
 public class ANVGLAuthority implements GrantedAuthority {
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+    
     private String authority;
+    
+    // TODO: XXX FK (delete cascade)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userId")
     private ANVGLUser parent;
 
     public ANVGLAuthority() {

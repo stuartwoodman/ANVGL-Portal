@@ -2,6 +2,15 @@ package org.auscope.portal.server.vegl;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 /**
  * Simple class that stores information about a job series consisting of
  * one or more jobs.
@@ -11,11 +20,21 @@ import java.io.Serializable;
  * @author Cihan Altinay
  * @Author Josh Vote
  */
+@Entity
+@Table(name = "series")
 public class VEGLSeries implements Serializable {
+    
     /** A unique identifier for this series */
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
     /** The user owning this series */
+    
+    // TODO: XXX FK users->email (delete/update cascade)
+    @OneToOne
+    @JoinColumn(name="email")
     private String user;
+    
     /** A short name for this series */
     private String name;
     /** A description of this series */

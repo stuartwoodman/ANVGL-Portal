@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.auscope.portal.server.web.security.ANVGLUser.AuthenticationFramework;
@@ -28,7 +29,7 @@ public class PersistedGoogleUserDetailsLoader implements OAuth2UserDetailsLoader
     protected SecureRandom random;
     protected String defaultRole;
     protected Map<String, List<String>> rolesByUser;
-    private ANVGLUserDao userDao;
+    private ANVGLUserRepository userRepository;
 
     /**
      * Creates a new GoogleOAuth2UserDetailsLoader that will assign defaultRole to every user as a granted authority.
@@ -59,19 +60,19 @@ public class PersistedGoogleUserDetailsLoader implements OAuth2UserDetailsLoader
     }
 
     /**
-     * The DAO that will be used to fetch/set users
+     * The Repository that will be used to fetch/set users
      * @return
      */
-    public ANVGLUserDao getUserDao() {
-        return userDao;
+    public ANVGLUserRepository getUserRepository() {
+        return userRepository;
     }
 
     /**
-     * The DAO that will be used to fetch/set users
-     * @param userDao
+     * The Repository that will be used to fetch/set users
+     * @param userRepository
      */
-    public void setUserDao(ANVGLUserDao userDao) {
-        this.userDao = userDao;
+    public void setUserRepository(ANVGLUserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     /**
@@ -92,7 +93,8 @@ public class PersistedGoogleUserDetailsLoader implements OAuth2UserDetailsLoader
 
     @Override
     public ANVGLUser getUserByUserId(String id) {
-        return userDao.getById(id);
+        Optional<ANVGLUser> user = userRepository.findById(id);
+        return user.get();
     }
 
     @Override
@@ -116,7 +118,7 @@ public class PersistedGoogleUserDetailsLoader implements OAuth2UserDetailsLoader
         ANVGLUser newUser = new ANVGLUser();
         applyInfoToUser(newUser, userInfo);
         newUser.setAuthentication(AuthenticationFramework.GOOGLE);
-        userDao.save(newUser); //create our new user
+        userRepository.save(newUser); //create our new user
 
         synchronized(this.random) {
             //Create an AWS secret for this user
@@ -128,7 +130,7 @@ public class PersistedGoogleUserDetailsLoader implements OAuth2UserDetailsLoader
             newUser.setS3Bucket(bucketName);
         }
         newUser.setAuthorities(authorities);
-        userDao.save(newUser); //apply authorities (so they inherit the ID)
+        userRepository.save(newUser); //apply authorities (so they inherit the ID)
 
         return newUser;
     }
@@ -139,7 +141,7 @@ public class PersistedGoogleUserDetailsLoader implements OAuth2UserDetailsLoader
 
         if (userDetails instanceof ANVGLUser) {
             applyInfoToUser((ANVGLUser) userDetails, userInfo);
-            userDao.save((ANVGLUser) userDetails);
+            userRepository.save((ANVGLUser) userDetails);
         }
 
         return userDetails;

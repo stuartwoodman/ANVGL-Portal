@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.auscope.portal.server.web.security.ANVGLUser;
+import org.auscope.portal.server.web.security.ANVGLUserRepository;
 import org.auscope.portal.server.web.security.PersistedGoogleUserDetailsLoader;
 
 /**
@@ -15,9 +16,12 @@ import org.auscope.portal.server.web.security.PersistedGoogleUserDetailsLoader;
  *
  */
 public class PersistedAAFUserDetailsLoader extends PersistedGoogleUserDetailsLoader {
+    
+    private ANVGLUserRepository userRepository;
 
-    public PersistedAAFUserDetailsLoader(String defaultRole) {
+    public PersistedAAFUserDetailsLoader(String defaultRole, ANVGLUserRepository userRepository) {
         super(defaultRole);
+        this.userRepository = userRepository;
     }
 
     public PersistedAAFUserDetailsLoader(String defaultRole, Map<String, List<String>> rolesByUser) {
@@ -25,7 +29,7 @@ public class PersistedAAFUserDetailsLoader extends PersistedGoogleUserDetailsLoa
     }
 
     protected ANVGLUser getUserByUserEmail(String email) {
-        return getUserDao().getByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
 }

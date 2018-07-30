@@ -4,6 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.cloud.CloudComputeService;
 import org.auscope.portal.server.web.controllers.BaseCloudController;
@@ -15,21 +23,38 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author Josh Vote (CSIRO)
  *
  */
+@Entity
+@Table(name = "users")
 public class ANVGLUser implements UserDetails {
 
     // Authentication frameworks
     public enum AuthenticationFramework { GOOGLE, AAF }
 
+    @Id
     private String id;
+    
     private String fullName;
+    
+    @Column(unique=true)
     private String email;
+    
+    @OneToMany
+    @JoinColumn(name = "id")
     private List<ANVGLAuthority> authorities;
+    
     private String arnExecution;
+    
     private String arnStorage;
+    
     private String s3Bucket;
+    
     private String awsSecret;
+    
     private String awsKeyName;
+    
     private Integer acceptedTermsConditions;
+    
+    @Transient
     private AuthenticationFramework authentication;
 
     public ANVGLUser() {
@@ -210,13 +235,13 @@ public class ANVGLUser implements UserDetails {
      * Returns true iff this ANVGLUser instance has at least 1 compute service
      * which has been properly configured.
      *
-     * @param nciDetailsDao
+     * @param nciDetails
      * @param cloudComputeServices
      * @return
      * @throws PortalServiceException
      */
-    public boolean configuredServicesStatus(NCIDetailsDao nciDetailsDao, CloudComputeService[] cloudComputeServices) throws PortalServiceException {
-        return !BaseCloudController.getConfiguredComputeServices(this, nciDetailsDao, cloudComputeServices).isEmpty();
+    public boolean configuredServicesStatus(NCIDetails nciDetails, CloudComputeService[] cloudComputeServices) throws PortalServiceException {
+        return !BaseCloudController.getConfiguredComputeServices(this, nciDetails, cloudComputeServices).isEmpty();
     }
 
     @Override

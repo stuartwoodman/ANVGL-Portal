@@ -43,23 +43,22 @@ import org.auscope.portal.server.vegl.VEGLJob;
 import org.auscope.portal.server.vegl.VEGLJobManager;
 import org.auscope.portal.server.vegl.VEGLSeries;
 import org.auscope.portal.server.vegl.VGLJobAuditLog;
-import org.auscope.portal.server.vegl.VGLJobAuditLogDao;
+import org.auscope.portal.server.vegl.VGLJobAuditLogRepository;
 import org.auscope.portal.server.vegl.VGLJobStatusAndLogReader;
 import org.auscope.portal.server.vegl.VglDownload;
 import org.auscope.portal.server.web.security.ANVGLUser;
 import org.auscope.portal.server.web.service.CloudSubmissionService;
-import org.auscope.portal.server.web.service.monitor.VGLJobStatusChangeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -70,7 +69,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Josh Vote
  * @author Richard Goh
  */
-@Controller
+@RestController
 public class JobListController extends BaseCloudController  {
 
     /** The name of the log file that the job will use*/
@@ -85,9 +84,8 @@ public class JobListController extends BaseCloudController  {
     private FileStagingService fileStagingService;
     private VGLJobStatusAndLogReader jobStatusLogReader;
     private JobStatusMonitor jobStatusMonitor;
-    private VGLJobStatusChangeHandler vglJobStatusChangeHandler;
     private CloudSubmissionService cloudSubmissionService;
-    private VGLJobAuditLogDao vglAuditLogDao;
+    private VGLJobAuditLogRepository vglAuditLogRepository;
 
     private String adminEmail=null;
 
@@ -109,11 +107,11 @@ public class JobListController extends BaseCloudController  {
     public JobListController(VEGLJobManager jobManager, CloudStorageService[] cloudStorageServices,
             FileStagingService fileStagingService, CloudComputeService[] cloudComputeServices,
             VGLJobStatusAndLogReader jobStatusLogReader,
-            JobStatusMonitor jobStatusMonitor,VGLJobStatusChangeHandler vglJobStatusChangeHandler,
+            JobStatusMonitor jobStatusMonitor,
             @Value("${vm.sh}") String vmSh, @Value("${vm-shutdown.sh}") String vmShutdownSh,
             @Value("${HOST.portalAdminEmail}") String adminEmail,
             CloudSubmissionService cloudSubmissionService,
-            VGLJobAuditLogDao vglAuditLogDao) {
+            VGLJobAuditLogRepository vglAuditLogRepository) {
         super(cloudStorageServices, cloudComputeServices, jobManager,vmSh,vmShutdownSh);
         this.jobManager = jobManager;
         this.fileStagingService = fileStagingService;
@@ -121,7 +119,7 @@ public class JobListController extends BaseCloudController  {
         this.jobStatusMonitor = jobStatusMonitor;
         this.adminEmail=adminEmail;
         this.cloudSubmissionService = cloudSubmissionService;
-        this.vglAuditLogDao = vglAuditLogDao;
+        this.vglAuditLogRepository = vglAuditLogRepository;
     }
 
 //    /**
@@ -133,7 +131,7 @@ public class JobListController extends BaseCloudController  {
 //     * @return A JSON object with a series attribute which is an array of
 //     *         VEGLSeries objects.
 //     */
-//    @RequestMapping("/secure/mySeries.do")
+//    @GetMapping("/secure/mySeries.do")
 //    public ModelAndView mySeries(HttpServletRequest request,
 //            HttpServletResponse response,
 //            @AuthenticationPrincipal ANVGLUser user) {
@@ -157,7 +155,7 @@ public class JobListController extends BaseCloudController  {
      * @return A JSON object with a success attribute and an error attribute
      *         in case the job was not found or can not be deleted.
      */
-    @RequestMapping("/secure/deleteJob.do")
+    @GetMapping("/secure/deleteJob.do")
     public ModelAndView deleteJob(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") Integer jobId,
@@ -195,7 +193,7 @@ public class JobListController extends BaseCloudController  {
      *         in case the series was not found in the job manager.
      * @throws PortalServiceException
      */
-    @RequestMapping("/secure/deleteSeriesJobs.do")
+    @GetMapping("/secure/deleteSeriesJobs.do")
     public ModelAndView deleteSeriesJobs(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("seriesId") Integer seriesId,
@@ -268,7 +266,7 @@ public class JobListController extends BaseCloudController  {
      * @return A JSON object with a success attribute and an error attribute
      *         in case the job was not found in the job manager.
      */
-    @RequestMapping("/secure/killJob.do")
+    @GetMapping("/secure/killJob.do")
     public ModelAndView killJob(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") Integer jobId,
@@ -354,7 +352,7 @@ public class JobListController extends BaseCloudController  {
      *         in case the series was not found in the job manager.
      * @throws PortalServiceException
      */
-    @RequestMapping("/secure/killSeriesJobs.do")
+    @GetMapping("/secure/killSeriesJobs.do")
     public ModelAndView killSeriesJobs(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("seriesId") Integer seriesId,
@@ -400,7 +398,7 @@ public class JobListController extends BaseCloudController  {
      * @param jobId
      * @return
      */
-    @RequestMapping("/secure/getCloudFileMetadata.do")
+    @GetMapping("/secure/getCloudFileMetadata.do")
     public ModelAndView getCloudFileMetadata(@RequestParam("jobId") Integer jobId,
             @RequestParam("fileName") String fileName,
             @AuthenticationPrincipal ANVGLUser user) {
@@ -438,7 +436,7 @@ public class JobListController extends BaseCloudController  {
      *         manager the JSON object will contain an error attribute
      *         indicating the error.
      */
-    @RequestMapping("/secure/jobCloudFiles.do")
+    @GetMapping("/secure/jobCloudFiles.do")
     public ModelAndView jobCloudFiles(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") Integer jobId,
@@ -477,7 +475,7 @@ public class JobListController extends BaseCloudController  {
      * @return null on success or the joblist view with an error parameter on
      *         failure.
      */
-    @RequestMapping("/secure/downloadFile.do")
+    @GetMapping("/secure/downloadFile.do")
     public ModelAndView downloadFile(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") Integer jobId,
@@ -532,7 +530,7 @@ public class JobListController extends BaseCloudController  {
      * @return null on success or the joblist view with an error parameter on
      *         failure.
      */
-    @RequestMapping("/secure/downloadAsZip.do")
+    @GetMapping("/secure/downloadAsZip.do")
     public ModelAndView downloadAsZip(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") Integer jobId,
@@ -614,7 +612,7 @@ public class JobListController extends BaseCloudController  {
      * @return A JSON object with a series attribute which is an array of
      *         VEGLSeries objects matching the criteria.
      */
-    @RequestMapping("/secure/querySeries.do")
+    @GetMapping("/secure/querySeries.do")
     public ModelAndView querySeries(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam(required=false, value="qSeriesName") String qName,
@@ -646,7 +644,7 @@ public class JobListController extends BaseCloudController  {
      * @param seriesDescription
      * @return
      */
-    @RequestMapping("/secure/createFolder.do")
+    @GetMapping("/secure/createFolder.do")
     public ModelAndView createFolder(HttpServletRequest request,
             @RequestParam("seriesName") String seriesName,
             @RequestParam("seriesDescription") String seriesDescription,
@@ -676,7 +674,7 @@ public class JobListController extends BaseCloudController  {
      *         <code>VEGLJob</code> objects.
      * @throws PortalServiceException
      */
-    @RequestMapping("/secure/listJobs.do")
+    @GetMapping("/secure/listJobs.do")
     public ModelAndView listJobs(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("seriesId") Integer seriesId,
@@ -721,7 +719,7 @@ public class JobListController extends BaseCloudController  {
      * @param user
      * @return
      */
-    @RequestMapping("/secure/setJobFolder.do")
+    @GetMapping("/secure/setJobFolder.do")
     public ModelAndView setJobFolder(HttpServletRequest request,
             @RequestParam("jobIds") Integer[] jobIds,
             @RequestParam(required=false, value="seriesId") Integer seriesId,
@@ -755,7 +753,7 @@ public class JobListController extends BaseCloudController  {
      * @throws PortalServiceException
      *
      */
-    @RequestMapping("/secure/jobsStatuses.do")
+    @GetMapping("/secure/jobsStatuses.do")
     public ModelAndView jobStatuses(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam(required=false, value="forceStatusRefresh", defaultValue="false") boolean forceStatusRefresh,
@@ -802,7 +800,7 @@ public class JobListController extends BaseCloudController  {
      * @throws PortalServiceException
      */
     @SuppressWarnings("unchecked")
-    @RequestMapping("/secure/treeJobs.do")
+    @GetMapping("/secure/treeJobs.do")
     public ModelAndView treeJobs(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam(required=false, value="forceStatusRefresh", defaultValue="false") boolean forceStatusRefresh,
@@ -905,7 +903,7 @@ public class JobListController extends BaseCloudController  {
      *
      * Job downloads will be copied directly (but new IDs minted)
      */
-    @RequestMapping("/secure/copyJobFiles.do")
+    @GetMapping("/secure/copyJobFiles.do")
     public ModelAndView copyJobFiles(HttpServletRequest request,
             @AuthenticationPrincipal ANVGLUser user,
             @RequestParam("targetJobId") Integer targetJobId,
@@ -971,7 +969,7 @@ public class JobListController extends BaseCloudController  {
      * Job files will be duplicated in LOCAL staging only. The files duplicated can be
      * controlled by a list of file names
      */
-    @RequestMapping("/secure/duplicateJob.do")
+    @GetMapping("/secure/duplicateJob.do")
     public ModelAndView duplicateJob(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("jobId") Integer jobId,
@@ -1052,7 +1050,7 @@ public class JobListController extends BaseCloudController  {
      * @param jobId
      * @return
      */
-    @RequestMapping("/secure/getSectionedLogs.do")
+    @GetMapping("/secure/getSectionedLogs.do")
     public ModelAndView getSectionedLogs(HttpServletRequest request,
             @RequestParam("jobId") Integer jobId,
             @RequestParam(value="file", required=false) String file,
@@ -1081,7 +1079,7 @@ public class JobListController extends BaseCloudController  {
      * @param jobId
      * @return
      */
-    @RequestMapping("/secure/getRawInstanceLogs.do")
+    @GetMapping("/secure/getRawInstanceLogs.do")
     public ModelAndView getRawInstanceLogs(HttpServletRequest request,
             @RequestParam("jobId") Integer jobId,
             @AuthenticationPrincipal ANVGLUser user) {
@@ -1106,7 +1104,7 @@ public class JobListController extends BaseCloudController  {
         }
     }
 
-    @RequestMapping("/secure/getPlaintextPreview.do")
+    @GetMapping("/secure/getPlaintextPreview.do")
     public ModelAndView getPlaintextPreview(
             @RequestParam("jobId") Integer jobId,
             @RequestParam("file") String file,
@@ -1147,7 +1145,7 @@ public class JobListController extends BaseCloudController  {
         }
     }
 
-    @RequestMapping("/secure/getImagePreview.do")
+    @GetMapping("/secure/getImagePreview.do")
     public void getImagePreview(
             HttpServletResponse response,
             @RequestParam("jobId") Integer jobId,
@@ -1187,7 +1185,7 @@ public class JobListController extends BaseCloudController  {
      * @param user
      * @return
      */
-    @RequestMapping("/secure/getAuditLogsForJob.do")
+    @GetMapping("/secure/getAuditLogsForJob.do")
     public ModelAndView getAuditLogsForJob(@RequestParam("jobId") Integer jobId, @AuthenticationPrincipal ANVGLUser user) {
         VEGLJob job = attemptGetJob(jobId, user);
         if (job == null) {
@@ -1195,7 +1193,7 @@ public class JobListController extends BaseCloudController  {
         }
 
         try {
-            List<VGLJobAuditLog> auditLogs = vglAuditLogDao.getAuditLogsOfJob(jobId);
+            List<VGLJobAuditLog> auditLogs = vglAuditLogRepository.findByJobId(jobId);
             return generateJSONResponseMAV(true, auditLogs, "");
         } catch (Exception ex) {
             log.error("Unable to access job audit logs for " + jobId + ": " + ex.getMessage());
