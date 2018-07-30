@@ -32,8 +32,6 @@ public class VEGLSeries implements Serializable {
     /** The user owning this series */
     
     // TODO: XXX FK users->email (delete/update cascade)
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="email")
     private String user;
     
     /** A short name for this series */

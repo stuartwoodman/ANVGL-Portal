@@ -29,7 +29,7 @@ public class ANVGLAuthority implements GrantedAuthority {
     private String authority;
     
     // TODO: XXX FK (delete cascade)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private ANVGLUser parent;
 

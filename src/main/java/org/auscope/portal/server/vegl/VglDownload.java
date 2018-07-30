@@ -3,6 +3,7 @@ package org.auscope.portal.server.vegl;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,42 +22,53 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "downloads")
 public class VglDownload implements Serializable, Cloneable {
+    
     private static final long serialVersionUID = 5436097345907506395L;
 
     /** The primary key for this download*/
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
+    
     /** The descriptive name of this download*/
     private String name;
+    
     /** The long description for this download*/
     private String description;
+    
     /** The actual URL that when accessed with a GET request will download data*/
     private String url;
+    
     /** Where the downloaded data (on the job VM) will be downloaded to*/
     private String localPath;
+    
     /** If this download is for a spatial region this will represent the most northern bounds of the region in WGS:84*/
     private Double northBoundLatitude;
+    
     /** If this download is for a spatial region this will represent the most southern bounds of the region in WGS:84*/
     private Double southBoundLatitude;
+    
     /** If this download is for a spatial region this will represent the most eastern bounds of the region in WGS:84*/
     private Double eastBoundLongitude;
+    
     /** If this download is for a spatial region this will represent the most western bounds of the region in WGS:84*/
     private Double westBoundLongitude;
-    /** The job that owns this download*/
     
+    /** The job that owns this download*/
     // TODO: XXX FK jobId: jobs('id')  (delete cascade)
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name="id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="jobId")
     private VEGLJob parent;
 
     /** Organisation or person responsible for this data set */
     @Transient
     private String owner;
+    
     /** Url of the data this is a subset of (if applicable) */
     @Transient
     private String parentUrl;
+    
     /** Name of the data this is a subset of (if applicable) */
     @Transient
     private String parentName;

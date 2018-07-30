@@ -40,12 +40,9 @@ public class ANVGLUser implements UserDetails {
     @Column(unique=true)
     private String email;
     
-    /*
+    //@OneToMany(mappedBy="parent")
     @OneToMany
     @JoinColumn(name = "id")
-    */
-    @OneToMany
-    @JoinColumn(name = "parent")
     private List<ANVGLAuthority> authorities;
     
     private String arnExecution;

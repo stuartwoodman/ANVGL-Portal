@@ -37,8 +37,6 @@ import org.auscope.portal.server.vegl.VglParameter.ParameterType;
 public class VEGLJob extends CloudJob implements Cloneable {
     
     private static final long serialVersionUID = -57851899164623641L;
-    @SuppressWarnings("unused")
-    private final Log logger = LogFactory.getLog(this.getClass());
     
     // Job fields overridden from portal-core (so they can be JPA'd) 
     @Id
@@ -48,8 +46,6 @@ public class VEGLJob extends CloudJob implements Cloneable {
     protected String description;
     
     // TODO: XXX FK users->email (delete/update cascade)
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="email")
     protected String emailAddress;
     
     protected String user;
