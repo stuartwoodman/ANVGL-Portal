@@ -2,6 +2,7 @@ package org.auscope.portal.server.vegl;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ public class VEGLSeries implements Serializable {
     /** The user owning this series */
     
     // TODO: XXX FK users->email (delete/update cascade)
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="email")
     private String user;
     

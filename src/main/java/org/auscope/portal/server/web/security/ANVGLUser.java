@@ -27,6 +27,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "users")
 public class ANVGLUser implements UserDetails {
 
+    private static final long serialVersionUID = 6532133343577205493L;
+
     // Authentication frameworks
     public enum AuthenticationFramework { GOOGLE, AAF }
 
@@ -38,8 +40,12 @@ public class ANVGLUser implements UserDetails {
     @Column(unique=true)
     private String email;
     
+    /*
     @OneToMany
     @JoinColumn(name = "id")
+    */
+    @OneToMany
+    @JoinColumn(name = "parent")
     private List<ANVGLAuthority> authorities;
     
     private String arnExecution;

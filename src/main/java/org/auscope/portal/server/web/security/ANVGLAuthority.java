@@ -1,6 +1,5 @@
 package org.auscope.portal.server.web.security;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,6 +19,8 @@ import org.springframework.security.core.GrantedAuthority;
 @Entity
 @Table(name = "authorities")
 public class ANVGLAuthority implements GrantedAuthority {
+
+    private static final long serialVersionUID = 5567656603347809418L;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)

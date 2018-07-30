@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +48,7 @@ public class VEGLJob extends CloudJob implements Cloneable {
     protected String description;
     
     // TODO: XXX FK users->email (delete/update cascade)
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="email")
     protected String emailAddress;
     
@@ -88,14 +91,21 @@ public class VEGLJob extends CloudJob implements Cloneable {
     private Date executeDate;
 
     /** A map of VglParameter objects keyed by their parameter names*/
+    @OneToMany
+    @JoinColumn(name="parent")
     private Map<String, VglParameter> jobParameters = new HashMap<>();
+    
     /** A list of VglDownload objects associated with this job*/
+    @OneToMany
+    @JoinColumn(name="jobId")
     private List<VglDownload> jobDownloads = new ArrayList<>();
 
     /** A list of FileInformation objects associated with this job*/
+    @Transient
     private List<FileInformation> jobFiles = new ArrayList<>();
 
     /** A set of Solutions associated with this job */
+    @Transient
     private Set<String> jobSolutions = new HashSet<>();
 
     public boolean isContainsPersistentVolumes() {

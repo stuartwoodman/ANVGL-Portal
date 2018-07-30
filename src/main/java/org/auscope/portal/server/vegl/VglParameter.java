@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -52,8 +52,8 @@ public class VglParameter implements Serializable, Cloneable {
     // TODO: XXX FK jobId:  jobs('id')   (cascade delete)
     /** The job that owns this parameter*/
     @JsonIgnore
-    @OneToOne
-    @JoinColumn(name="id")
+    @ManyToOne
+    @JoinColumn(name="jobId")
     private VEGLJob parent;
 
 
