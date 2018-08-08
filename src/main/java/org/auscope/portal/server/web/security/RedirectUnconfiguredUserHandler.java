@@ -92,6 +92,7 @@ public class RedirectUnconfiguredUserHandler implements AuthenticationSuccessHan
             return;
         }
 
-        response.sendRedirect("../");
+        //response.sendRedirect("../");
+        response.sendRedirect("http://localhost:4200/login/loggedIn/");
     }
 }

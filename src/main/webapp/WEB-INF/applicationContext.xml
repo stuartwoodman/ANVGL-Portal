@@ -29,7 +29,8 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${jdbc.driverClass}"/>
-        <property name="url" value="${HOST.jdbc.url}"/>
+        <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <property name="url" value="${jdbc.url}"/>
         <property name="username" value="${env.jdbc.user}"/>
         <property name="password" value="${env.jdbc.password}"/>
     </bean>
@@ -39,7 +40,8 @@
     </bean>
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="${HOST.smtp.server}" />
+    <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <property name="host" value="${smtp.server}" />
     </bean>
 
     <!--
@@ -67,9 +69,11 @@
         <property name="maxLengthForSeriesNameInSubject" value="15" />
         <property name="maxLengthForJobNameInSubject" value="15" />
         <property name="maxLinesForTail" value="5" />
-        <property name="emailSender" value="${HOST.portalAdminEmail}"/>
+        <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <property name="emailSender" value="${portalAdminEmail}"/>
         <property name="emailSubject" value="VGL Job (%s)" />
-        <property name="portalUrl" value="${HOST.portalUrl}"/>
+        <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <property name="portalUrl" value="${portalUrl}"/>
     </bean>
 
     <util:list id="pylintCommand">
@@ -88,8 +92,10 @@
                 <ref bean="cloudStorageService-nectar-melb" /> 
             </array> 
         </constructor-arg>
-        <constructor-arg name="promsUrl" value="${HOST.proms.report.url}"/>
-        <constructor-arg name="promsReportingSystemUri" value="${HOST.proms.reportingsystem.uri}"/>
+        <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <constructor-arg name="promsUrl" value="${proms.report.url}"/>
+        <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <constructor-arg name="promsReportingSystemUri" value="${proms.reportingsystem.uri}"/>
     </bean>
     
     <bean name="jobStatusLogReader" class="org.auscope.portal.server.vegl.VGLJobStatusAndLogReader" autowire="constructor"/>
@@ -235,8 +241,10 @@
         <property name="name" value="Amazon Web Services - S3"/>
         <property name="id" value="amazon-aws-storage-sydney"/>
         <property name="bucket" value="vgl-csiro-"/>
-        <property name="adminEmail" value="${HOST.portalAdminEmail}"/>
-        <property name="stsRequirement" value="${HOST.aws.stsrequirement}"/>
+        <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <property name="adminEmail" value="${portalAdminEmail}"/>
+        <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <property name="stsRequirement" value="${aws.stsrequirement}"/>
     </bean>
     
     <bean id="cloudStorageService-nectar-melb" class="org.auscope.portal.core.services.cloud.CloudStorageServiceJClouds">
@@ -271,7 +279,8 @@
         
         <property name="id" value="aws-ec2-compute"/>
         <property name="name" value="Amazon Web Services - EC2"/>
-        <property name="stsRequirement" value="${HOST.aws.stsrequirement}"/>
+        <!-- TODO: Reimplement HOST property configurer for property XXX -->
+        <property name="stsRequirement" value="${aws.stsrequirement}"/>
         
         <property name="availableImages">
             <list>
@@ -321,7 +330,8 @@
     <bean id="fileStagingService" class="org.auscope.portal.server.web.service.ANVGLFileStagingService">
         <constructor-arg name="stagingInformation">
             <bean class="org.auscope.portal.core.cloud.StagingInformation">
-                <constructor-arg name="stageInDirectory" value="${HOST.localStageInDir}"/>
+            <!-- TODO: Reimplement HOST property configurer for property XXX -->
+                <constructor-arg name="stageInDirectory" value="${localStageInDir}"/>
             </bean>
         </constructor-arg>
     </bean>
@@ -332,7 +342,8 @@
                 value="org.auscope.portal.server.web.service.ScmEntryService.setSolutionsUrl"/>
       <property name="arguments">
         <list>
-          <value>${HOST.solutions.url}</value>
+          <!-- TODO: Reimplement HOST property configurer for property XXX -->
+          <value>${solutions.url}</value>
         </list>
       </property>
     </bean>

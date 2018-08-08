@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.auscope.portal.server.web.security.ANVGLUser.AuthenticationFramework;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.racquettrack.security.oauth.OAuth2UserDetailsLoader;
@@ -29,6 +30,7 @@ public class PersistedGoogleUserDetailsLoader implements OAuth2UserDetailsLoader
     protected SecureRandom random;
     protected String defaultRole;
     protected Map<String, List<String>> rolesByUser;
+    @Autowired
     private ANVGLUserRepository userRepository;
 
     /**

@@ -1,0 +1,22 @@
+# Spring Social general
+social.auto-signup=false
+
+# Google
+google.client.id=
+google.client.secret=
+google.scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+
+# Facebook
+facebook.app.id=
+facebook.app.secret=
+facebook.scope=public_profile,email
+
+# LinkedIn
+linkedin.consumer.key=
+linkedin.consumer.secret=
+linkedin.scope=
+
+# Twitter
+#twitter.consumer.key=
+#twitter.consumer.secret=
+#twitter.scope=

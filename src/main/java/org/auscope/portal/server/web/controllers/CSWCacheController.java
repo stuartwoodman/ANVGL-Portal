@@ -11,15 +11,15 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @version $Id: CSWCacheController.java 1863 2011-08-08 07:55:42Z JoshVote $
  */
-@Controller
+@RestController
 public class CSWCacheController extends BaseCSWController {
     private CSWCacheService cswService;
 
@@ -42,7 +42,7 @@ public class CSWCacheController extends BaseCSWController {
      * This controller method returns a representation of each and every CSWRecord from the internal cache
      * @throws Exception
      */
-    @RequestMapping("/getCSWRecords.do")
+    @GetMapping("/getCSWRecords.do")
     public ModelAndView getCSWRecords() {
         List<CSWRecord> records = null;
         try {
@@ -59,7 +59,7 @@ public class CSWCacheController extends BaseCSWController {
      * This controller method is for forcing the internal cache of CSWRecords to invalidate and update.
      * @return
      */
-    @RequestMapping("/updateCSWCache.do")
+    @GetMapping("/updateCSWCache.do")
     public ModelAndView updateCSWCache() {
         try {
             this.cswService.updateCache();
@@ -75,7 +75,7 @@ public class CSWCacheController extends BaseCSWController {
      * Requests every keyword as cached by
      * @return
      */
-    @RequestMapping("/getCSWKeywords.do")
+    @GetMapping("/getCSWKeywords.do")
     public ModelAndView getCSWKeywords() {
         Map<String, Set<CSWRecord>> keywords = this.cswService.getKeywordCache();
 

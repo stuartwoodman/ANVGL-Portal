@@ -45,6 +45,8 @@ public class ANVGLUser implements UserDetails {
     @JoinColumn(name = "id")
     private List<ANVGLAuthority> authorities;
     
+    private String encryptedPassword;
+    
     private String arnExecution;
     
     private String arnStorage;
@@ -138,6 +140,24 @@ public class ANVGLUser implements UserDetails {
      */
     public void setEmail(String email) {
         this.email = email;
+    }
+    
+    /**
+     * Gets the encrypted password for the user
+     * 
+     * @return encrypted password
+     */
+    public String getEncryptedPassword() {
+        return this.encryptedPassword;
+    }
+    
+    /**
+     * Sets the encrypted password for the user
+     * 
+     * @param encryptedPassword the encrypted password
+     */
+    public void setEncryptedPassword(String encryptedPassword) {
+        this.encryptedPassword = encryptedPassword;
     }
 
     /**

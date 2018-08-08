@@ -5,10 +5,10 @@ import java.awt.geom.Rectangle2D;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.controllers.BasePortalController;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jhlabs.map.proj.Projection;
@@ -19,7 +19,7 @@ import com.jhlabs.map.proj.ProjectionFactory;
  * @author Josh Vote
  *
  */
-@Controller
+@RestController
 public class ReprojectionController extends BasePortalController {
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -72,7 +72,7 @@ public class ReprojectionController extends BasePortalController {
      * the center of the selected region is in.
      * @return
      */
-    @RequestMapping("/calculateMgaZoneForBBox.do")
+    @GetMapping("/calculateMgaZoneForBBox.do")
     public ModelAndView calculateMgaZoneForBBox(@RequestParam("northBoundLatitude") final double northBoundLatitude,
                                          @RequestParam("southBoundLatitude") final double southBoundLatitude,
                                          @RequestParam("eastBoundLongitude") final double eastBoundLongitude,
@@ -94,7 +94,7 @@ public class ReprojectionController extends BasePortalController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/projectBBoxToUtm.do")
+    @GetMapping("/projectBBoxToUtm.do")
     public ModelAndView projectBBoxToUtm(@RequestParam("northBoundLatitude") double northBoundLatitude,
                                 @RequestParam("southBoundLatitude") double southBoundLatitude,
                                 @RequestParam("eastBoundLongitude") double eastBoundLongitude,

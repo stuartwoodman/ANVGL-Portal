@@ -83,6 +83,8 @@ public class ANVGLProvenanceService {
      * Autowired constructor for Spring -- don't use this directly, you should
      * be able to autowire this into your own class.
      * 
+     * TODO: Reimplement HOST property configurer for properties proms.* XXX
+     * 
      * @param newAnvglFileStagingService
      *            set the local file store must not be null
      * @param newCloudStorageServices
@@ -91,8 +93,8 @@ public class ANVGLProvenanceService {
     @Autowired
     public ANVGLProvenanceService(final ANVGLFileStagingService anvglFileStagingService,
             final CloudStorageService[] cloudStorageServices,
-            @Value("${HOST.proms.report.url}") String promsUrl,
-            @Value("${HOST.proms.reportingsystem.uri}") String promsReportingSystemUri) {
+            @Value("${proms.report.url}") String promsUrl,
+            @Value("${proms.reportingsystem.uri}") String promsReportingSystemUri) {
         this.anvglFileStagingService = anvglFileStagingService;
         this.cloudStorageServices = cloudStorageServices;
         this.PROMSReportingSystem = promsReportingSystemUri;

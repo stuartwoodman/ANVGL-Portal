@@ -39,8 +39,12 @@ public class UserController extends BasePortalController {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
+    @Autowired
     private ANVGLUserRepository userRepository;
+    
+    @Autowired
     private NCIDetailsRepository nciDetailsRepository;
+    
     private VelocityEngine velocityEngine;
 
     private String awsAccount;
@@ -49,8 +53,8 @@ public class UserController extends BasePortalController {
     
     @Autowired
     public UserController(
-            ANVGLUserRepository userRepository,
-            NCIDetailsRepository nciDetailsRepository,
+            //ANVGLUserRepository userRepository,
+            //NCIDetailsRepository nciDetailsRepository,
             VelocityEngine velocityEngine,
             @Value("${env.aws.account}") String awsAccount,
             @Value("${termsconditions.version}") String tacVersion) throws PortalServiceException {

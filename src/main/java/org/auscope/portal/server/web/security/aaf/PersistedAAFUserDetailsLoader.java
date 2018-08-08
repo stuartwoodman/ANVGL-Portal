@@ -6,6 +6,7 @@ import java.util.Map;
 import org.auscope.portal.server.web.security.ANVGLUser;
 import org.auscope.portal.server.web.security.ANVGLUserRepository;
 import org.auscope.portal.server.web.security.PersistedGoogleUserDetailsLoader;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * User details loader, almost identical in functionality to
@@ -17,6 +18,7 @@ import org.auscope.portal.server.web.security.PersistedGoogleUserDetailsLoader;
  */
 public class PersistedAAFUserDetailsLoader extends PersistedGoogleUserDetailsLoader {
     
+    @Autowired
     private ANVGLUserRepository userRepository;
 
     public PersistedAAFUserDetailsLoader(String defaultRole, ANVGLUserRepository userRepository) {

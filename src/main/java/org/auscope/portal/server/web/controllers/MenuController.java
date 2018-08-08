@@ -60,11 +60,21 @@ public class MenuController {
     private CloudComputeService[] cloudComputeServices;
     private NCIDetailsRepository nciDetailsRepository;
 
+    /**
+     * Reimplement HOST property configurer for properties google*, portalAdminEmail and aafLoginUrl XXX
+     * 
+     * @param googleMapKey
+     * @param googleAnalyticsKey
+     * @param adminEmail
+     * @param aafLoginUrl
+     * @param cloudComputeServices
+     * @param nciDetailsRepository
+     */
     @Autowired
-    public MenuController(@Value("${HOST.googlemap.key}") String googleMapKey,
-                         @Value("${HOST.google.analytics.key:}") String googleAnalyticsKey,
-                         @Value("${HOST.portalAdminEmail}") String adminEmail,
-                         @Value("${HOST.aafLoginUrl}") String aafLoginUrl,
+    public MenuController(@Value("${googlemap.key}") String googleMapKey,
+                         @Value("${google.analytics.key:}") String googleAnalyticsKey,
+                         @Value("${portalAdminEmail}") String adminEmail,
+                         @Value("${aafLoginUrl}") String aafLoginUrl,
                          CloudComputeService[] cloudComputeServices,
                          NCIDetailsRepository nciDetailsRepository) {
         this.buildStamp = null;

@@ -1,1 +1,72 @@
 # Template for application.properties
+
+# General
+server.contextPath=/VGL-Portal
+
+# Database
+spring.jpa.hibernate.ddl-auto=none
+spring.datasource.url=
+spring.jpa.hibernate.showsql=false
+# Stop JPA converting camel case to underscore
+spring.jpa.hibernate.naming.implicit-strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+# Properties that do not change across machines
+###########################################################
+jdbc.driverClass=com.mysql.jdbc.Driver
+termsconditions.version=1
+
+# Timeouts in seconds
+wait-for-body-content.timeout=90
+socket.timeout=90
+connection-establish.timeout=90
+
+# Cloud Compute Properties
+###########################################################
+vm.sh=https://raw.githubusercontent.com/AuScope/ANVGL-Portal/master/vm/vl.sh
+vm-shutdown.sh=https://raw.githubusercontent.com/AuScope/ANVGL-Portal/master/vm/vl-shutdown.sh
+
+# TODO: Make machine specific again
+googlemap.key=
+erddapservice.url=
+smtp.server=
+localStageInDir=
+solutions.url=
+proms.report.url=
+proms.reportingsystem.uri=
+aws.stsrequirement=
+portalUrl=
+portalAdminEmail=
+defaultToolbox=
+aafLoginUrl=
+
+
+# TODO: XXX These are env.properties, move them out of here. Currently just getting things running
+
+# New DB properties
+spring.datasource.username=DB_USERNAME
+spring.datasource.password=DB_PASSWORD
+
+
+env.outputgeonetwork.user=GEONETWORK_USER
+env.outputgeonetwork.password=GEONETWORK_PASSWORD
+env.nci.ec2.accesskey=NCI_EC2_ACCESS_KEY
+env.nci.ec2.secretkey=NCI_EC2_SECRET_KEY
+env.nci.storage.accesskey=NCI_STORAGE_ACCESS_KEY
+env.nci.storage.secretkey=NCI_STORAGE_SECRET_KEY
+env.nci.encryption.128bitkey=Cxi3Mspe8QmK11Qh
+
+env.nectar.ec2.accesskey=
+env.nectar.ec2.secretkey=
+env.nectar.storage.accesskey=
+env.nectar.storage.secretkey=
+
+# TODO: Delete Google stuff from here when no longer needed
+env.aaf.jwtsecret=
+env.aws.ec2.accesskey=
+env.aws.ec2.secretkey=
+env.aws.s3.accesskey=
+env.aws.s3.secretkey=
+env.aws.accesskey=
+env.aws.secretkey=
+env.encryption.password=

@@ -15,10 +15,10 @@ import org.auscope.portal.server.vegl.VglDownload;
 import org.auscope.portal.server.web.service.SimpleWfsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -26,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Josh Vote
  *
  */
-@Controller
+@RestController
 public class JobDownloadController extends BasePortalController {
 
     /**
@@ -41,8 +41,14 @@ public class JobDownloadController extends BasePortalController {
 
     private String erddapServiceUrl;
 
+    /**
+     * TODO: Reimplement HOST property configurer for property erddapservice.url XXX
+     * 
+     * @param wfsService
+     * @param erddapServiceUrl
+     */
     @Autowired
-    public JobDownloadController(SimpleWfsService wfsService, @Value("${HOST.erddapservice.url}") String erddapServiceUrl) {
+    public JobDownloadController(SimpleWfsService wfsService, @Value("${erddapservice.url}") String erddapServiceUrl) {
         this.wfsService = wfsService;
         this.erddapServiceUrl=erddapServiceUrl;
     }
@@ -85,7 +91,7 @@ public class JobDownloadController extends BasePortalController {
      * is true the download object will also be saved to the session wide SESSION_DOWNLOAD_LIST list.
      * @return
      */
-    @RequestMapping("/makeDownloadUrl.do")
+    @GetMapping("/makeDownloadUrl.do")
     public ModelAndView makeDownloadUrl(@RequestParam("url") String url,
             @RequestParam("name") String name,
             @RequestParam("description") String description,
@@ -127,7 +133,7 @@ public class JobDownloadController extends BasePortalController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/makeErddapUrl.do")
+    @GetMapping("/makeErddapUrl.do")
     public ModelAndView makeErddapUrl(@RequestParam("northBoundLatitude") final Double northBoundLatitude,
                                 @RequestParam("eastBoundLongitude") final Double eastBoundLongitude,
                                 @RequestParam("southBoundLatitude") final Double southBoundLatitude,
@@ -177,7 +183,7 @@ public class JobDownloadController extends BasePortalController {
      * @throws Exception
      */
 
-    @RequestMapping("/makeNetcdfsubseserviceUrl.do")
+    @GetMapping("/makeNetcdfsubseserviceUrl.do")
     public ModelAndView makeNetcdfsubsetserviceUrl(@RequestParam("url") String url,
                                 @RequestParam("northBoundLatitude") final Double northBoundLatitude,
                                 @RequestParam("eastBoundLongitude") final Double eastBoundLongitude,
@@ -229,7 +235,7 @@ public class JobDownloadController extends BasePortalController {
      * @param featureType The feature type name to query
      * @param maxFeatures [Optional] The maximum number of features to query
      */
-    @RequestMapping("/makeWfsUrl.do")
+    @GetMapping("/makeWfsUrl.do")
     public ModelAndView makeWfsUrl(@RequestParam("serviceUrl") final String serviceUrl,
                                            @RequestParam("featureType") final String featureType,
                                            @RequestParam(required = false, value = "srsName") final String srsName,
@@ -294,7 +300,7 @@ public class JobDownloadController extends BasePortalController {
      * @param request The servlet request with query parameters
      * @return number of download requests in user session.
      */
-    @RequestMapping("/getNumDownloadRequests.do")
+    @GetMapping("/getNumDownloadRequests.do")
     public ModelAndView getNumDownloadRequests(HttpServletRequest request) {
         int size = 0;
         List<?> downloadList = (List<?>)request.getSession().getAttribute(SESSION_DOWNLOAD_LIST);

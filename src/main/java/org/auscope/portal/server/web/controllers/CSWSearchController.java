@@ -30,12 +30,12 @@ import org.auscope.portal.server.web.service.csw.SearchFacet;
 import org.auscope.portal.server.web.service.csw.SearchFacet.Comparison;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import net.sf.json.JSONObject;
@@ -45,7 +45,7 @@ import net.sf.json.JSONObject;
  * @author Josh Vote (CSIRO)
  *
  */
-@Controller
+@RestController
 public class CSWSearchController extends BaseCSWController {
 
     private LocalCSWFilterService filterService;
@@ -72,7 +72,7 @@ public class CSWSearchController extends BaseCSWController {
      * @param serviceId
      * @return
      */
-    @RequestMapping("facetedKeywords.do")
+    @GetMapping("facetedKeywords.do")
     public ModelAndView facetedKeywords(@RequestParam("serviceId") String[] serviceIds) {
         final Set<String> keywords = new HashSet<String>();
 
@@ -97,7 +97,7 @@ public class CSWSearchController extends BaseCSWController {
      * @param rawComparisons A list of all comparisons between field/value to be searched against. Must match the other raw params in length.
      * @return
      */
-    @RequestMapping("facetedCSWSearch.do")
+    @GetMapping("facetedCSWSearch.do")
     public ModelAndView facetedCSWSearch(
             @RequestParam(value="start", required=false, defaultValue="1") Integer[] starts,
             @RequestParam(value="limit", required=false, defaultValue="10") Integer limit,
@@ -300,7 +300,7 @@ public class CSWSearchController extends BaseCSWController {
      *
      * @return
      */
-    @RequestMapping("/getFacetedCSWServices.do")
+    @GetMapping("/getFacetedCSWServices.do")
     public ModelAndView getCSWServices() {
         List<ModelMap> convertedServiceItems = new ArrayList<ModelMap>();
 

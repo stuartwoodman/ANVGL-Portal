@@ -8,22 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.server.gridjob.FileInformation;
 import org.auscope.portal.server.vegl.VglParameter.ParameterType;
+import org.auscope.portal.server.web.security.ANVGLUser;
 
 /**
  * A specialisation of a generic cloud job for the VEGL Portal
@@ -45,10 +43,22 @@ public class VEGLJob extends CloudJob implements Cloneable {
     protected String name;
     protected String description;
     
-    // TODO: XXX FK users->email (delete/update cascade)
-    protected String emailAddress;
     
+    
+    // TODO: XXX FK users->email (delete/update cascade)
+    // XXX Change to User, except... CloudJob doesn't reference User. Why?
+    /*
+    @ManyToOne
+    @JoinColumn(referencedColumnName="email")
+    protected ANVGLUser anvglUser;
+    */
+    
+    // TODO: If we use above, still need this?
+    protected String emailAddress;
     protected String user;
+    
+    
+    
     protected Date submitDate;
     protected Date processDate;
     protected String status;
@@ -65,11 +75,19 @@ public class VEGLJob extends CloudJob implements Cloneable {
     // VGL specific job fields
     private String registeredUrl;
     
+    
+    /*
+    @ManyToOne
+    @JoinColumn(referencedColumnName="id")
+    protected VEGLSeries series;
+    */
+    
     // TODO: XXX FK series->id (delete cascade)
     //@ManyToOne(fetch = FetchType.EAGER)
     //@JoinColumn(name="id")
     // Ugh, why is this not VEGLSeries?
     private Integer seriesId;
+    
     
     private boolean emailNotification;
     private String processTimeLog;

@@ -134,8 +134,8 @@ public class TestJobBuilderController {
                                      vglJobStatusChangeHandler,
                                      mockScmEntryService,
                                      mockAnvglProvenanceService,
-                                     mockCloudSubmissionService,
-                                     mockNciDetailsRepository);
+                                     mockCloudSubmissionService/*,
+                                     mockNciDetailsRepository*/);
 
         user = new ANVGLUser();
         user.setEmail("user@example.com");

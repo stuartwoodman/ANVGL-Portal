@@ -2,15 +2,15 @@ package org.auscope.portal.server.vegl;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.auscope.portal.server.web.security.ANVGLUser;
 
 /**
  * Simple class that stores information about a job series consisting of
@@ -25,17 +25,30 @@ import javax.persistence.Table;
 @Table(name = "series")
 public class VEGLSeries implements Serializable {
     
+    private static final long serialVersionUID = -4483263063748119882L;
+    
     /** A unique identifier for this series */
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
     /** The user owning this series */
     
+    
+    
     // TODO: XXX FK users->email (delete/update cascade)
+    @ManyToOne
+    @JoinColumn(referencedColumnName="email")
+    private ANVGLUser anvglUser;
+    
+    // TODO: Now that we've added above, get rid of this
     private String user;
+    
+    
+    
     
     /** A short name for this series */
     private String name;
+    
     /** A description of this series */
     private String description;
 

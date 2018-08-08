@@ -15,10 +15,10 @@ import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.server.web.service.VglAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -27,7 +27,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
  * @author Josh Vote
  *
  */
-@Controller
+@RestController
 public class AdminController {
 
     @SuppressWarnings("unused")
@@ -77,7 +77,7 @@ public class AdminController {
      * @return
      * @throws MalformedURLException Should never occur
      */
-    @RequestMapping("/testExternalConnectivity.diag")
+    @GetMapping("/testExternalConnectivity.diag")
     public ModelAndView testExternalConnectivity() throws MalformedURLException {
         URL[] urlsToTest = new URL[] {
                 new URL("http://www.google.com"),
@@ -92,7 +92,7 @@ public class AdminController {
      * Performs an external connectivity test to the various CSW's through the HttpServiceCaller
      * @return
      */
-    @RequestMapping("/testCSWConnectivity.diag")
+    @GetMapping("/testCSWConnectivity.diag")
     public ModelAndView testCSWConnectivity() {
         AdminDiagnosticResponse response = adminService.cswConnectivity(cswServiceList);
         return generateTestResponse(response);
@@ -134,7 +134,7 @@ public class AdminController {
      * @return
      * @throws URISyntaxException
      */
-    @RequestMapping("/testWFS.diag")
+    @GetMapping("/testWFS.diag")
     public ModelAndView testWFS(@RequestParam("serviceUrls") String[] serviceUrls,
             @RequestParam("typeNames") String[] typeNames,
             @RequestParam("bbox") String bboxJson) throws URISyntaxException {
@@ -162,7 +162,7 @@ public class AdminController {
      * @return
      * @throws URISyntaxException
      */
-    @RequestMapping("/testWMS.diag")
+    @GetMapping("/testWMS.diag")
     public ModelAndView testWMS(@RequestParam("serviceUrls") String[] serviceUrls,
             @RequestParam("layerNames") String[] layerNames,
             @RequestParam("bbox") String bboxJson) throws URISyntaxException {

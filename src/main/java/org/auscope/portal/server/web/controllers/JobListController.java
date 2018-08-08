@@ -103,13 +103,28 @@ public class JobListController extends BaseCloudController  {
         this.adminEmail = adminEmail;
     }
 
+    /**
+     * Reimplement HOST property configurer for property portalAdminEmail XXX
+     * 
+     * @param jobManager
+     * @param cloudStorageServices
+     * @param fileStagingService
+     * @param cloudComputeServices
+     * @param jobStatusLogReader
+     * @param jobStatusMonitor
+     * @param vmSh
+     * @param vmShutdownSh
+     * @param adminEmail
+     * @param cloudSubmissionService
+     * @param vglAuditLogRepository
+     */
     @Autowired
     public JobListController(VEGLJobManager jobManager, CloudStorageService[] cloudStorageServices,
             FileStagingService fileStagingService, CloudComputeService[] cloudComputeServices,
             VGLJobStatusAndLogReader jobStatusLogReader,
             JobStatusMonitor jobStatusMonitor,
             @Value("${vm.sh}") String vmSh, @Value("${vm-shutdown.sh}") String vmShutdownSh,
-            @Value("${HOST.portalAdminEmail}") String adminEmail,
+            @Value("${portalAdminEmail}") String adminEmail,
             CloudSubmissionService cloudSubmissionService,
             VGLJobAuditLogRepository vglAuditLogRepository) {
         super(cloudStorageServices, cloudComputeServices, jobManager,vmSh,vmShutdownSh);

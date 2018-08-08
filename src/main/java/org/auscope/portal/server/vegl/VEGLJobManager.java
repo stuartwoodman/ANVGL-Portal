@@ -6,10 +6,12 @@ import java.util.List;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.server.web.security.ANVGLUser;
 import org.auscope.portal.server.web.security.NCIDetails;
-import org.auscope.portal.server.web.security.NCIDetailsDao;
+import org.auscope.portal.server.web.security.NCIDetailsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Class that talks to the data objects to retrieve or save data
@@ -21,52 +23,74 @@ import org.auscope.portal.server.web.security.NCIDetailsDao;
 public class VEGLJobManager {
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private VEGLJobDao veglJobDao;
-    private VEGLSeriesDao veglSeriesDao;
-    private VGLJobAuditLogDao vglJobAuditLogDao;
-    private NCIDetailsDao nciDetailsDao;
+    @Autowired
+    private VEGLJobRepository veglJobRepository;
+    
+    @Autowired
+    private VEGLSeriesRepository veglSeriesRepository;
+    
+    @Autowired
+    private VGLJobAuditLogRepository vglJobAuditLogRepository;
+    
+    @Autowired
+    private NCIDetailsRepository nciDetailsRepository;
 
-    public List<VEGLSeries> querySeries(String user, String name, String desc) {
-        return veglSeriesDao.query(user, name, desc);
+    public List<VEGLSeries> querySeries(String user, String name, String description) {
+        //return veglSeriesDao.query(user, name, desc);
+        return veglSeriesRepository.findByUserAndNameAndDescription(user, name, description);
     }
 
     public List<VEGLJob> getSeriesJobs(int seriesId, ANVGLUser user) throws PortalServiceException {
-        List<VEGLJob> jobs = veglJobDao.getJobsOfSeries(seriesId, user);
+        //List<VEGLJob> jobs = veglJobDao.getJobsOfSeries(seriesId, user);
+        // XXX Do we need to pass User and JPA relationship will know what we're talking about?
+        List<VEGLJob> jobs = veglJobRepository.findBySeriesIdAndEmail(seriesId, user.getEmail());
         return applyNCIDetails(jobs, user);
     }
 
     public List<VEGLJob> getUserJobs(ANVGLUser user) throws PortalServiceException {
-
-        List<VEGLJob> jobs = veglJobDao.getJobsOfUser(user);
+        //List<VEGLJob> jobs = veglJobDao.getJobsOfUser(user);
+        List<VEGLJob> jobs = veglJobRepository.findByEmail(user.getEmail());
         return applyNCIDetails(jobs, user);
     }
 
     public List<VEGLJob> getPendingOrActiveJobs() {
-        return veglJobDao.getPendingOrActiveJobs();
+        //return veglJobRepository.getPendingOrActiveJobs();
+        return veglJobRepository.findPendingOrActive();
     }
 
     public List<VEGLJob> getInQueueJobs() {
-        return veglJobDao.getInQueueJobs();
+        //return veglJobRepository.getInQueueJobs();
+        return veglJobRepository.findInQueue();
     }
 
     public VEGLJob getJobById(int jobId, ANVGLUser user) throws PortalServiceException {
-        return applyNCIDetails(veglJobDao.get(jobId, user), user);
+        //return applyNCIDetails(veglJobDao.get(jobId, user), user);
+        return applyNCIDetails(veglJobRepository.findByIdAndEmailAddress(jobId, user.getEmail()), user);
     }
 
     public VEGLJob getJobById(int jobId, String stsArn, String clientSecret, String s3Role, String userEmail, String nciUser, String nciProj, String nciKey) {
-        return veglJobDao.get(jobId, stsArn, clientSecret, s3Role, userEmail, nciUser, nciProj, nciKey);
+        //return veglJobRepository.get(jobId, stsArn, clientSecret, s3Role, userEmail, nciUser, nciProj, nciKey);
+        VEGLJob job = veglJobRepository.findByIdAndEmailAddress(jobId, userEmail);
+        // This was moved out of VEGLJobDao 
+        job.setProperty(CloudJob.PROPERTY_STS_ARN, stsArn);
+        job.setProperty(CloudJob.PROPERTY_CLIENT_SECRET, clientSecret);
+        job.setProperty(CloudJob.PROPERTY_S3_ROLE, s3Role);
+        job.setProperty(NCIDetails.PROPERTY_NCI_USER, nciUser);
+        job.setProperty(NCIDetails.PROPERTY_NCI_PROJECT, nciProj);
+        job.setProperty(NCIDetails.PROPERTY_NCI_KEY, nciKey);
+        return job;
     }
 
     public void deleteJob(VEGLJob job) {
-        veglJobDao.deleteJob(job);
+        veglJobRepository.delete(job);
     }
 
     public VEGLSeries getSeriesById(int seriesId, String userEmail) {
-        return veglSeriesDao.get(seriesId, userEmail);
+        return veglSeriesRepository.findByIdAndUser(seriesId, userEmail);
     }
 
     public void saveJob(VEGLJob veglJob) {
-        veglJobDao.save(veglJob);
+        veglJobRepository.save(veglJob);
     }
 
     /**
@@ -88,7 +112,7 @@ public class VEGLJobManager {
 
             // Failure in the creation of the job life cycle audit trail is
             // not critical hence we allow it to fail silently and log it.
-            vglJobAuditLogDao.save(vglJobAuditLog);
+            vglJobAuditLogRepository.save(vglJobAuditLog);
         } catch (Exception ex) {
             logger.warn("Error creating audit trail for job: " + vglJobAuditLog, ex);
         }
@@ -117,40 +141,43 @@ public class VEGLJobManager {
 
             // Failure in the creation of the job life cycle audit trail is
             // not critical hence we allow it to fail silently and log it.
-            vglJobAuditLogDao.save(vglJobAuditLog);
+            vglJobAuditLogRepository.save(vglJobAuditLog);
         } catch (Exception ex) {
             logger.warn("Error creating audit trail for job: " + vglJobAuditLog, ex);
         }
     }
 
     public void deleteSeries(VEGLSeries series) {
-        veglSeriesDao.delete(series);
+        veglSeriesRepository.delete(series);
     }
 
     public void saveSeries(VEGLSeries series) {
-        veglSeriesDao.save(series);
+        veglSeriesRepository.save(series);
     }
 
-    public void setVeglJobDao(VEGLJobDao veglJobDao) {
-        this.veglJobDao = veglJobDao;
+    // Injected, but methods needed for tests
+    public void setVeglJobRepository(VEGLJobRepository veglJobRepository) {
+        this.veglJobRepository = veglJobRepository;
     }
 
-    public void setVeglSeriesDao(VEGLSeriesDao veglSeriesDao) {
-        this.veglSeriesDao = veglSeriesDao;
+    public void setVeglSeriesRepository(VEGLSeriesRepository veglSeriesRepository) {
+        this.veglSeriesRepository = veglSeriesRepository;
     }
 
-    public void setVglJobAuditLogDao(VGLJobAuditLogDao vglJobAuditLogDao) {
-        this.vglJobAuditLogDao = vglJobAuditLogDao;
+    public void setVglJobAuditLogRepository(VGLJobAuditLogRepository vglJobAuditLogRepository) {
+        this.vglJobAuditLogRepository = vglJobAuditLogRepository;
     }
 
-    public NCIDetailsDao getNciDetailsDao() {
-        return nciDetailsDao;
+    public void setNciDetailsRepository(NCIDetailsRepository nciDetailsRepository) {
+        this.nciDetailsRepository = nciDetailsRepository;
     }
 
-    public void setNciDetailsDao(NCIDetailsDao nciDetailsDao) {
-        this.nciDetailsDao = nciDetailsDao;
+    /*
+    public NCIDetailsRepository getNciDetailsRepository() {
+        return nciDetailsRepository;
     }
-
+    */
+    
     private VEGLJob applyNCIDetails(VEGLJob job, NCIDetails nciDetails) {
         if (nciDetails != null) {
             try {
@@ -168,18 +195,17 @@ public class VEGLJobManager {
         if (job == null) {
             return null;
         }
-        return applyNCIDetails(job, nciDetailsDao.getByUser(user));
+        return applyNCIDetails(job, nciDetailsRepository.findByUser(user));
     }
 
     private List<VEGLJob> applyNCIDetails(List<VEGLJob> jobs, ANVGLUser user) throws PortalServiceException {
-        NCIDetails nciDetails = nciDetailsDao.getByUser(user);
+        NCIDetails nciDetails = nciDetailsRepository.findByUser(user);
 
         if (nciDetails != null) {
             for (VEGLJob job: jobs) {
                 applyNCIDetails(job, nciDetails);
             }
         }
-
         return jobs;
     }
 

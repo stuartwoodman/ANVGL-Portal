@@ -9,9 +9,9 @@ import org.auscope.portal.core.services.cloud.monitor.JobStatusMonitor;
 import org.auscope.portal.server.vegl.VEGLJob;
 import org.auscope.portal.server.vegl.VEGLJobManager;
 import org.auscope.portal.server.web.security.ANVGLUser;
-import org.auscope.portal.server.web.security.ANVGLUserDao;
+import org.auscope.portal.server.web.security.ANVGLUserRepository;
 import org.auscope.portal.server.web.security.NCIDetails;
-import org.auscope.portal.server.web.security.NCIDetailsDao;
+import org.auscope.portal.server.web.security.NCIDetailsRepository;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -35,31 +35,31 @@ public class VGLJobStatusMonitor extends QuartzJobBean {
 
     private VEGLJobManager jobManager;
     private JobStatusMonitor jobStatusMonitor;
-    private ANVGLUserDao jobUserDao;
     
-    private NCIDetailsDao nciDetailsDao;
+    private ANVGLUserRepository jobUserRepository;
+    private NCIDetailsRepository nciDetailsRepository;
     
     
     /**
-     * @return the nciDetailsDao
+     * @return the nciDetailsRepository
      */
-    public NCIDetailsDao getNciDetailsDao() {
-        return nciDetailsDao;
+    public NCIDetailsRepository getNciDetailsRepository() {
+        return nciDetailsRepository;
     }
 
     /**
-     * @param nciDetailsDao the nciDetailsDao to set
+     * @param nciDetailsRepository the nciDetailsRepository to set
      */
-    public void setNciDetailsDao(NCIDetailsDao nciDetailsDao) {
-        this.nciDetailsDao = nciDetailsDao;
+    public void setNciDetailsDao(NCIDetailsRepository nciDetailsRepository) {
+        this.nciDetailsRepository = nciDetailsRepository;
     }
 
-    public ANVGLUserDao getJobUserDao() {
-        return jobUserDao;
+    public ANVGLUserRepository getJobUserRepository() {
+        return jobUserRepository;
     }
 
-    public void setJobUserDao(ANVGLUserDao jobUserDao) {
-        this.jobUserDao = jobUserDao;
+    public void setJobUserRepository(ANVGLUserRepository jobUserRepository) {
+        this.jobUserRepository = jobUserRepository;
     }
 
     /**
@@ -85,10 +85,10 @@ public class VGLJobStatusMonitor extends QuartzJobBean {
         try {
             List<VEGLJob> jobs = jobManager.getPendingOrActiveJobs();
             for (VEGLJob veglJob : jobs) {
-                ANVGLUser user = jobUserDao.getByEmail(veglJob.getEmailAddress());
+                ANVGLUser user = jobUserRepository.findByEmail(veglJob.getEmailAddress());
                 veglJob.setProperty(CloudJob.PROPERTY_STS_ARN, user.getArnExecution());
                 veglJob.setProperty(CloudJob.PROPERTY_CLIENT_SECRET, user.getAwsSecret());
-                NCIDetails nciDetails = nciDetailsDao.getByUser(user);
+                NCIDetails nciDetails = nciDetailsRepository.findByUser(user);
                 if (nciDetails != null) {
                     veglJob.setProperty(NCIDetails.PROPERTY_NCI_USER, nciDetails.getUsername());
                     veglJob.setProperty(NCIDetails.PROPERTY_NCI_PROJECT, nciDetails.getProject());

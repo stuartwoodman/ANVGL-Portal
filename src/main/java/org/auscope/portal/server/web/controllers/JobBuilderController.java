@@ -87,6 +87,7 @@ public class JobBuilderController extends BaseCloudController {
     private String adminEmail = null;
     private String defaultToolbox = null;
     private CloudSubmissionService cloudSubmissionService;
+    @Autowired
     private NCIDetailsRepository nciDetailsRepository;
 
     /**
@@ -119,16 +120,33 @@ public class JobBuilderController extends BaseCloudController {
     public static final String DOWNLOAD_SCRIPT = "vl-download.sh";
     VGLJobStatusChangeHandler vglJobStatusChangeHandler;
 
+    /**
+     * TODO: Reimplement HOST property configurer for properties portalAdminEmail and defaultToolbox XXX
+     * 
+     * @param adminEmail
+     * @param defaultToolbox
+     * @param jobManager
+     * @param fileStagingService
+     * @param vmSh
+     * @param vmShutdownSh
+     * @param cloudStorageServices
+     * @param cloudComputeServices
+     * @param vglJobStatusChangeHandler
+     * @param scmEntryService
+     * @param anvglProvenanceService
+     * @param cloudSubmissionService
+     * @param nciDetailsRepository
+     */
     @Autowired
-    public JobBuilderController(@Value("${HOST.portalAdminEmail}") String adminEmail,
-            @Value("${HOST.defaultToolbox}") String defaultToolbox,
+    public JobBuilderController(@Value("${portalAdminEmail}") String adminEmail,
+            @Value("${defaultToolbox}") String defaultToolbox,
             VEGLJobManager jobManager, FileStagingService fileStagingService,
             @Value("${vm.sh}") String vmSh, @Value("${vm-shutdown.sh}") String vmShutdownSh,
             CloudStorageService[] cloudStorageServices,
             CloudComputeService[] cloudComputeServices, VGLJobStatusChangeHandler vglJobStatusChangeHandler,
             ScmEntryService scmEntryService, ANVGLProvenanceService anvglProvenanceService,
-            CloudSubmissionService cloudSubmissionService,
-            NCIDetailsRepository nciDetailsRepository) {
+            CloudSubmissionService cloudSubmissionService/*,
+            NCIDetailsRepository nciDetailsRepository*/) {
         super(cloudStorageServices, cloudComputeServices, jobManager,vmSh,vmShutdownSh);
         this.fileStagingService = fileStagingService;
         this.cloudStorageServices = cloudStorageServices;
@@ -139,7 +157,7 @@ public class JobBuilderController extends BaseCloudController {
         this.adminEmail=adminEmail;
         this.defaultToolbox = defaultToolbox;
         this.cloudSubmissionService = cloudSubmissionService;
-        this.nciDetailsRepository = nciDetailsRepository;
+        //this.nciDetailsRepository = nciDetailsRepository;
     }
 
 
