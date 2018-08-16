@@ -1,5 +1,7 @@
 package org.auscope.portal;
 
+import org.auscope.portal.server.web.security.RedirectUnconfiguredUserHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
@@ -20,4 +22,8 @@ import org.springframework.context.annotation.ImportResource;
     "classpath*:profile-portal-test.xml"})
 public class VglServerConfiguration {
 
+    @Bean
+    public RedirectUnconfiguredUserHandler redirectUnconfiguredUserHandler() {
+        return new RedirectUnconfiguredUserHandler();
+    }
 }

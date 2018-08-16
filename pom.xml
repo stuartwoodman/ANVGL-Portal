@@ -92,7 +92,7 @@
     </organization>
     <build>
         <finalName>VGL-Portal</finalName>
-                
+        
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -387,6 +387,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth.boot</groupId>
+            <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+            <version>2.0.1.RELEASE</version>
         </dependency>
 
         <!-- Spring Boot social authentication -->
