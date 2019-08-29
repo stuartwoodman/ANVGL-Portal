@@ -362,6 +362,10 @@ public class LocalCSWFilterService {
         for (FilterRunner runner : allRunners) {
             response.getNextIndexes().put(runner.serviceId, runner.currentNextIndex);
             response.getStartIndexes().put(runner.serviceId, runner.currentStartIndex);
+            // Add error message if an error occurred
+            if(runner.error != null) {
+            	response.getSearchErrors().put(runner.serviceId, runner.error.getLocalizedMessage());
+            }
         }
 
         return response;

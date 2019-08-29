@@ -20,6 +20,7 @@ public class FacetedMultiSearchResponse implements Serializable {
     private Map<String, Integer> startIndexes;
     private Map<String, Integer> nextIndexes;
     private Map<String, Integer> recordsMatched;
+    private Map<String, String> searchErrors;
 
     public FacetedMultiSearchResponse() {
         super();
@@ -27,6 +28,7 @@ public class FacetedMultiSearchResponse implements Serializable {
         this.startIndexes = new HashMap<String, Integer>();
         this.nextIndexes = new HashMap<String, Integer>();
         this.setRecordsMatched(new HashMap<String, Integer>());
+        this.searchErrors = new HashMap<String, String>();
     }
     /**
      * The CSWRecords parsed from the CSW response
@@ -85,5 +87,21 @@ public class FacetedMultiSearchResponse implements Serializable {
 	 */
 	public void setRecordsMatched(Map<String, Integer> recordsMatched) {
 		this.recordsMatched = recordsMatched;
+	}
+	
+	/**
+	 * The error message if an error was thrown when searching
+	 * @return
+	 */
+	public Map<String, String> getSearchErrors() {
+		return searchErrors;
+	}
+	
+	/**
+	 * The error message if an error was thrown when searching
+	 * @param searchErrors
+	 */
+	public void setSearchErrors(Map<String, String> searchErrors) {
+		this.searchErrors = searchErrors;
 	}
 }

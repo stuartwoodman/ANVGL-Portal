@@ -216,6 +216,7 @@ public class CSWSearchController extends BaseCSWController {
         mm.put("nextIndexes", response.getNextIndexes());
         mm.put("records", viewRecords);
         mm.put("recordsMatched", recordsMatched);
+        mm.put("searchErrors",  response.getSearchErrors());
 
         return generateJSONResponseMAV(true, mm, "");
     }
